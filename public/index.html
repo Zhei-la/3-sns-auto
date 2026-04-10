@@ -3,389 +3,164 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>블로그, 카페, 스레드</title>
-<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@700&family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
+<title>블로그, 카페, 스레드 원고 작성기</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
 <style>
 :root {
-  --bg: #0a0a0b;
-  --bg2: #111113;
-  --bg3: #1a1a1e;
-  --sidebar: #0e0e10;
-  --gold: #c9a96e;
-  --gold2: #e8c98a;
-  --gold-dim: rgba(201,169,110,0.1);
-  --gold-border: rgba(201,169,110,0.22);
-  --text: #f0ede8;
-  --text2: #9e9b95;
-  --text3: #4a4845;
-  --border: rgba(255,255,255,0.06);
-  --border2: rgba(255,255,255,0.1);
-  --radius: 14px;
+  --bg: #0a0a0b; --bg2: #111113; --bg3: #1a1a1e; --sidebar: #0e0e10;
+  --gold: #c9a96e; --gold-dim: rgba(201,169,110,0.1); --gold-border: rgba(201,169,110,0.22);
+  --text: #f0ede8; --text2: #9e9b95; --text3: #4a4845;
+  --border: rgba(255,255,255,0.06); --border2: rgba(255,255,255,0.1);
 }
 * { box-sizing: border-box; margin: 0; padding: 0; }
 html, body { height: 100%; overflow: hidden; }
-body {
-  background: var(--bg);
-  color: var(--text);
-  font-family: 'Noto Sans KR', sans-serif;
-}
+body { background: var(--bg); color: var(--text); font-family: 'Noto Sans KR', sans-serif; }
 
-/* ── 로그인 화면 ── */
+/* ── 로그인 ── */
 #login-screen {
-  position: fixed;
-  inset: 0;
-  background: var(--bg);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 100;
-  padding: 24px;
+  position: fixed; inset: 0; background: var(--bg);
+  display: flex; align-items: center; justify-content: center; z-index: 100; padding: 24px;
 }
 .login-box {
-  background: var(--bg2);
-  border: 1px solid var(--border2);
-  border-radius: 20px;
-  padding: 40px 36px;
-  width: 100%;
-  max-width: 400px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 20px;
+  background: var(--bg2); border: 1px solid var(--border2); border-radius: 20px;
+  padding: 40px 36px; width: 100%; max-width: 400px;
+  display: flex; flex-direction: column; align-items: center; gap: 20px;
 }
-.login-logo {
-  font-family: 'Noto Sans KR', sans-serif;
-  font-size: 24px;
-  font-weight: 700;
-  text-align: center;
-  width: 100%;
-  color: #ffffff;
-  line-height: 1.5;
-  letter-spacing: -0.3px;
-}
-.login-sub {
-  font-size: 13px;
-  color: var(--text2);
-  text-align: center;
-  line-height: 1.6;
-}
-.login-input-wrap {
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
+.login-logo { font-size: 24px; font-weight: 700; color: #fff; text-align: center; line-height: 1.5; letter-spacing: -0.3px; }
+.login-sub { font-size: 13px; color: var(--text2); text-align: center; line-height: 1.6; }
+.login-input-wrap { width: 100%; display: flex; flex-direction: column; gap: 10px; }
 .login-input {
-  width: 100%;
-  background: var(--bg3);
-  border: 1px solid var(--border2);
-  border-radius: 10px;
-  padding: 13px 16px;
-  font-size: 15px;
-  color: var(--text);
-  font-family: 'Noto Sans KR', sans-serif;
-  outline: none;
-  text-align: center;
-  letter-spacing: .1em;
-  transition: border-color .2s;
+  width: 100%; background: var(--bg3); border: 1px solid var(--border2); border-radius: 10px;
+  padding: 13px 16px; font-size: 15px; color: var(--text); font-family: 'Noto Sans KR', sans-serif;
+  outline: none; text-align: center; letter-spacing: .1em; transition: border-color .2s;
 }
 .login-input:focus { border-color: var(--gold-border); }
 .login-input::placeholder { color: var(--text3); letter-spacing: 0; }
 .login-btn {
-  width: 100%;
-  padding: 13px;
-  background: linear-gradient(135deg, #c9a96e, #e8c98a);
-  border: none;
-  border-radius: 10px;
-  font-family: 'Noto Sans KR', sans-serif;
-  font-size: 14px;
-  font-weight: 700;
-  color: #0a0a0b;
-  cursor: pointer;
-  transition: opacity .2s;
+  width: 100%; padding: 13px; background: linear-gradient(135deg, #c9a96e, #e8c98a);
+  border: none; border-radius: 10px; font-family: 'Noto Sans KR', sans-serif;
+  font-size: 14px; font-weight: 700; color: #0a0a0b; cursor: pointer; transition: opacity .2s;
 }
 .login-btn:hover { opacity: .85; }
-.login-err {
-  font-size: 12px;
-  color: #e74c3c;
-  display: none;
-  text-align: center;
-}
+.login-err { font-size: 12px; color: #e74c3c; display: none; text-align: center; }
 
-/* ── 메인 앱 ── */
-#app {
-  display: none;
-  height: 100vh;
-  flex-direction: column;
-}
+/* ── 앱 ── */
+#app { display: none; height: 100vh; flex-direction: column; }
 #app.show { display: flex; }
 
-/* ── 모바일 상단 탭 ── */
-.mobile-tabs {
-  display: none;
-  height: 50px;
-  background: var(--bg2);
-  border-bottom: 1px solid var(--border);
-  flex-shrink: 0;
-}
-.mobile-tabs-inner {
-  display: flex;
-  height: 100%;
-  align-items: stretch;
-  padding: 0 8px;
-  gap: 4px;
-}
-.mobile-tab {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 2px;
-  cursor: pointer;
-  border-bottom: 2px solid transparent;
-  font-size: 11px;
-  color: var(--text2);
-  transition: all .15s;
-  padding: 6px 4px;
-}
-.mobile-tab .tab-icon { font-size: 17px; }
+/* ── 모바일 상단 ── */
+.mobile-header { display: none; flex-direction: column; background: var(--sidebar); border-bottom: 1px solid var(--border); flex-shrink: 0; }
+.mobile-top-btns { display: flex; gap: 8px; padding: 10px 12px; border-bottom: 1px solid var(--border); }
+.mobile-top-btns .side-btn { flex: 1; padding: 8px; font-size: 12px; }
+.mobile-tabs { display: flex; }
+.mobile-tab { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px; padding: 10px 4px; font-size: 11px; color: var(--text2); border-bottom: 2px solid transparent; cursor: pointer; transition: all .15s; }
+.mobile-tab .ico { font-size: 18px; }
 .mobile-tab.active { color: var(--gold); border-bottom-color: var(--gold); }
 
-/* ── PC 레이아웃 ── */
-.layout {
-  flex: 1;
-  display: flex;
-  overflow: hidden;
-}
+/* ── 레이아웃 ── */
+.layout { flex: 1; display: flex; overflow: hidden; }
 
-/* 사이드바 */
-.sidebar {
-  width: 220px;
-  background: var(--sidebar);
-  border-right: 1px solid var(--border);
-  flex-shrink: 0;
-  display: flex;
-  flex-direction: column;
-  padding: 24px 0;
-}
-.sidebar-logo {
-  font-family: 'Noto Serif KR', serif;
-  font-size: 15px;
-  font-weight: 700;
-  color: var(--gold);
-  padding: 0 20px 20px;
-  border-bottom: 1px solid var(--border);
-  margin-bottom: 12px;
-  text-align: center;
-  line-height: 1.6;
-}
-.sidebar-logo span {
-  display: block;
-  font-family: 'Noto Sans KR', sans-serif;
-  font-size: 12px;
-  color: var(--text2);
-  font-weight: 500;
-  margin-top: 4px;
-}
-.nav-item {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 11px 20px;
-  cursor: pointer;
-  font-size: 13px;
-  font-weight: 500;
-  color: var(--text2);
-  transition: all .15s;
-  border-left: 3px solid transparent;
-  margin: 1px 0;
-  justify-content: center;
-}
+/* ── 사이드바 ── */
+.sidebar { width: 220px; background: var(--sidebar); border-right: 1px solid var(--border); flex-shrink: 0; display: flex; flex-direction: column; padding: 28px 0; }
+.sidebar-logo { font-size: 15px; font-weight: 700; color: #fff; padding: 0 20px 24px; border-bottom: 1px solid var(--border); margin-bottom: 16px; text-align: center; line-height: 1.7; }
+.sidebar-logo em { color: var(--gold); font-style: normal; display: block; font-size: 16px; }
+.nav-item { display: flex; align-items: center; justify-content: center; gap: 10px; padding: 13px 20px; font-size: 14px; font-weight: 500; color: var(--text2); border-left: 3px solid transparent; margin: 2px 0; cursor: pointer; transition: all .15s; }
 .nav-item:hover { color: var(--text); background: rgba(255,255,255,0.03); }
-.nav-item.active {
-  color: var(--gold);
-  background: var(--gold-dim);
-  border-left-color: var(--gold);
-}
-.nav-icon { font-size: 17px; width: 20px; text-align: center; }
-.nav-badge {
-  margin-left: auto;
-  font-size: 9px;
-  padding: 1px 6px;
-  border-radius: 99px;
-  background: var(--gold-dim);
-  border: 1px solid var(--gold-border);
-  color: var(--gold);
-  font-weight: 700;
-}
-.sidebar-bottom {
-  margin-top: auto;
-  padding: 16px 20px 0;
-  border-top: 1px solid var(--border);
-}
-.logout-btn {
-  font-size: 12px;
-  color: var(--text3);
-  cursor: pointer;
-  transition: color .15s;
-}
-.logout-btn:hover { color: var(--text2); }
+.nav-item.active { color: var(--gold); background: var(--gold-dim); border-left-color: var(--gold); }
+.nav-icon { font-size: 18px; }
+.sidebar-bottom { margin-top: auto; padding: 20px 12px 0; border-top: 1px solid var(--border); display: flex; flex-direction: column; gap: 8px; }
+.side-btn { display: block; text-align: center; padding: 9px 12px; border-radius: 8px; font-size: 12px; font-weight: 600; text-decoration: none; transition: opacity .15s; }
+.side-btn:hover { opacity: .8; }
+.code-btn { background: var(--gold-dim); border: 1px solid var(--gold-border); color: var(--gold); }
+.contact-btn { background: rgba(255,255,255,0.04); border: 1px solid var(--border2); color: var(--text2); }
 
-/* 콘텐츠 영역 */
-.content {
-  flex: 1;
-  position: relative;
-  overflow: hidden;
-  background: var(--bg);
-}
-.page {
-  position: absolute;
-  inset: 0;
-  display: none;
-}
+/* ── 콘텐츠 ── */
+.content { flex: 1; overflow: hidden; position: relative; }
+.page { position: absolute; inset: 0; display: none; overflow-y: auto; }
 .page.active { display: block; }
-.page iframe {
-  width: 100%;
-  height: 100%;
-  border: none;
-}
+.page iframe { width: 100%; height: 100%; border: none; }
 
-/* 홈 페이지 */
-.home-page {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 24px;
-  gap: 12px;
-  text-align: center;
-}
-.home-title {
-  font-family: 'Noto Serif KR', serif;
-  font-size: clamp(22px, 3vw, 34px);
-  font-weight: 700;
-  line-height: 1.4;
-}
+/* ── 홈 ── */
+.home-page { min-height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 32px; gap: 20px; text-align: center; }
+.home-title { font-size: 36px; font-weight: 700; line-height: 1.4; }
 .home-title em { color: var(--gold); font-style: normal; }
-.home-sub { font-size: 13px; color: var(--text2); line-height: 1.7; margin-bottom: 8px; }
-.home-cards {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 12px;
-  width: 100%;
-  max-width: 680px;
-}
-.home-card {
-  background: var(--bg3);
-  border: 1px solid var(--border2);
-  border-radius: var(--radius);
-  padding: 20px 16px;
-  cursor: pointer;
-  transition: all .2s;
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-.home-card:hover {
-  border-color: var(--gold-border);
-  background: var(--gold-dim);
-  transform: translateY(-2px);
-}
-.home-card-icon { font-size: 26px; }
-.home-card-name { font-size: 13px; font-weight: 700; }
-.home-card-desc { font-size: 11px; color: var(--text2); line-height: 1.5; }
+.home-sub { font-size: 15px; color: var(--text2); line-height: 1.7; }
+.home-cards { display: grid; grid-template-columns: repeat(3,1fr); gap: 16px; width: 100%; max-width: 820px; margin-top: 12px; }
+.home-card { background: var(--bg3); border: 1px solid var(--border2); border-radius: 18px; padding: 36px 20px; cursor: pointer; transition: all .2s; display: flex; flex-direction: column; align-items: center; gap: 14px; text-align: center; }
+.home-card:hover { border-color: var(--gold-border); background: var(--gold-dim); transform: translateY(-3px); }
+.home-card-icon { font-size: 38px; }
+.home-card-name { font-size: 16px; font-weight: 700; }
+.home-card-desc { font-size: 13px; color: var(--text2); line-height: 1.6; }
+.home-card-cta { font-size: 12px; color: var(--gold); margin-top: 6px; font-weight: 500; }
 
 /* 로딩 */
-.loading {
-  position: absolute;
-  inset: 0;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 12px;
-  background: var(--bg);
-}
-.spinner {
-  width: 32px; height: 32px;
-  border: 3px solid var(--border2);
-  border-top-color: var(--gold);
-  border-radius: 50%;
-  animation: spin .7s linear infinite;
-}
+.loading { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px; height: 100%; }
+.spinner { width: 32px; height: 32px; border: 3px solid var(--border2); border-top-color: var(--gold); border-radius: 50%; animation: spin .7s linear infinite; }
 @keyframes spin { to { transform: rotate(360deg); } }
-.loading-text { font-size: 13px; color: var(--text2); }
 
-/* 반응형 */
+/* ── 반응형 ── */
 @media (max-width: 600px) {
   .sidebar { display: none; }
-  .mobile-tabs { display: flex; }
-  .home-cards { grid-template-columns: 1fr; }
+  .mobile-header { display: flex; }
+  .home-title { font-size: 24px; }
+  .home-sub { font-size: 13px; }
+  .home-cards { grid-template-columns: 1fr; gap: 10px; max-width: 100%; }
+  .home-card { padding: 20px 16px; flex-direction: row; text-align: left; gap: 14px; border-radius: 14px; align-items: flex-start; }
+  .home-card-icon { font-size: 28px; flex-shrink: 0; margin-top: 2px; }
+  .home-card-name { font-size: 14px; }
+  .home-card-desc { font-size: 12px; }
+  .home-card-cta { font-size: 11px; }
+  .home-page { padding: 20px; gap: 14px; justify-content: flex-start; padding-top: 24px; }
 }
 </style>
 </head>
 <body>
 
-<!-- 로그인 화면 -->
+<!-- 로그인 -->
 <div id="login-screen">
   <div class="login-box">
     <div class="login-logo">블로그, 카페, 스레드<br>원고 작성기</div>
     <div class="login-sub">초대코드를 입력하면<br>로그인 상태가 유지돼요</div>
     <div class="login-input-wrap">
-      <input class="login-input" id="code-input" type="text" placeholder="초대코드 입력" maxlength="9" autocomplete="off" />
+      <input class="login-input" id="code-input" type="text" placeholder="초대코드 입력" maxlength="20" autocomplete="off" />
       <div class="login-err" id="login-err">올바르지 않은 코드예요</div>
       <button class="login-btn" onclick="doLogin()">입장하기</button>
     </div>
   </div>
 </div>
 
-<!-- 메인 앱 -->
+<!-- 앱 -->
 <div id="app">
-  <!-- 모바일 상단 탭 -->
-  <div class="mobile-tabs">
-    <div class="mobile-tabs-inner">
-      <div class="mobile-tab active" onclick="switchPage('home')">
-        <span class="tab-icon">🏠</span>홈
-      </div>
-      <div class="mobile-tab" onclick="switchPage('blog')">
-        <span class="tab-icon">📝</span>블로그
-      </div>
-      <div class="mobile-tab" onclick="switchPage('cafe')">
-        <span class="tab-icon">☕</span>카페
-      </div>
-      <div class="mobile-tab" onclick="switchPage('threads')">
-        <span class="tab-icon">🧵</span>스레드
-      </div>
+  <!-- 모바일 상단 -->
+  <div class="mobile-header">
+    <div class="mobile-top-btns">
+      <a href="https://open.kakao.com/o/gehIVJpi" target="_blank" class="side-btn code-btn">🎟 코드 받으러가기</a>
+      <a href="https://open.kakao.com/me/Zheila" target="_blank" class="side-btn contact-btn">💬 문의하기</a>
+    </div>
+    <div class="mobile-tabs">
+      <div class="mobile-tab active" onclick="switchPage('home')"><span class="ico">🏠</span>홈</div>
+      <div class="mobile-tab" onclick="switchPage('blog')"><span class="ico">📝</span>블로그</div>
+      <div class="mobile-tab" onclick="switchPage('cafe')"><span class="ico">☕</span>카페</div>
+      <div class="mobile-tab" onclick="switchPage('threads')"><span class="ico">🧵</span>스레드</div>
     </div>
   </div>
 
   <div class="layout">
-    <!-- PC 사이드바 -->
+    <!-- 사이드바 -->
     <div class="sidebar">
-      <div class="sidebar-logo">
-        블로그 / 카페 / 스레드<br>원고 작성기
-      </div>
-      <div class="nav-item active" onclick="switchPage('home')">
-        <span class="nav-icon">🏠</span> 홈
-      </div>
-      <div class="nav-item" onclick="switchPage('blog')">
-        <span class="nav-icon">📝</span> 네이버 블로그
-      </div>
-      <div class="nav-item" onclick="switchPage('cafe')">
-        <span class="nav-icon">☕</span> 네이버 카페
-      </div>
-      <div class="nav-item" onclick="switchPage('threads')">
-        <span class="nav-icon">🧵</span> 스레드
-      </div>
+      <div class="sidebar-logo">블로그 / 카페 / 스레드<br><em>원고 작성기</em></div>
+      <div class="nav-item active" onclick="switchPage('home')"><span class="nav-icon">🏠</span> 홈</div>
+      <div class="nav-item" onclick="switchPage('blog')"><span class="nav-icon">📝</span> 네이버 블로그</div>
+      <div class="nav-item" onclick="switchPage('cafe')"><span class="nav-icon">☕</span> 네이버 카페</div>
+      <div class="nav-item" onclick="switchPage('threads')"><span class="nav-icon">🧵</span> 스레드</div>
       <div class="sidebar-bottom">
-        <div class="logout-btn" onclick="doLogout()">로그아웃</div>
+        <a href="https://open.kakao.com/o/gehIVJpi" target="_blank" class="side-btn code-btn">🎟 코드 받으러가기</a>
+        <a href="https://open.kakao.com/me/Zheila" target="_blank" class="side-btn contact-btn">💬 문의하기</a>
       </div>
     </div>
 
     <!-- 콘텐츠 -->
     <div class="content">
-      <!-- 홈 -->
       <div class="page active" id="page-home">
         <div class="home-page">
           <div class="home-title">블로그, 카페, 스레드<br><em>원고 작성기</em></div>
@@ -394,73 +169,52 @@ body {
             <div class="home-card" onclick="switchPage('blog')">
               <div class="home-card-icon">📝</div>
               <div class="home-card-name">네이버 블로그</div>
-              <div class="home-card-desc">네이버 블로그 원고를 AI가 자동 작성</div>
+              <div class="home-card-desc">네이버 블로그 원고를 AI가 자동 작성해드려요</div>
+              <div class="home-card-cta">바로가기 →</div>
             </div>
             <div class="home-card" onclick="switchPage('cafe')">
               <div class="home-card-icon">☕</div>
               <div class="home-card-name">네이버 카페</div>
-              <div class="home-card-desc">네이버 카페 글을 AI가 자동 작성</div>
+              <div class="home-card-desc">네이버 카페 글을 AI가 자동 작성해드려요</div>
+              <div class="home-card-cta">바로가기 →</div>
             </div>
             <div class="home-card" onclick="switchPage('threads')">
               <div class="home-card-icon">🧵</div>
               <div class="home-card-name">스레드</div>
               <div class="home-card-desc">쿠팡 링크 삽입 가능한 스레드 자동화</div>
+              <div class="home-card-cta">바로가기 →</div>
             </div>
           </div>
         </div>
       </div>
 
-      <!-- 블로그 -->
       <div class="page" id="page-blog">
-        <div class="loading" id="loading-blog">
-          <div class="spinner"></div>
-          <div class="loading-text">블로그 원고 생성기 로딩 중...</div>
-        </div>
-        <iframe id="iframe-blog" src="about:blank" onload="onLoad('blog')"></iframe>
+        <div class="loading" id="loading-blog"><div class="spinner"></div><div style="color:var(--text2);font-size:13px">로딩 중...</div></div>
+        <iframe id="iframe-blog" src="about:blank" style="position:absolute;inset:0;opacity:0" onload="onLoad('blog')"></iframe>
       </div>
-
-      <!-- 카페 -->
       <div class="page" id="page-cafe">
-        <div class="loading" id="loading-cafe">
-          <div class="spinner"></div>
-          <div class="loading-text">카페 글 생성기 로딩 중...</div>
-        </div>
-        <iframe id="iframe-cafe" src="about:blank" onload="onLoad('cafe')"></iframe>
+        <div class="loading" id="loading-cafe"><div class="spinner"></div><div style="color:var(--text2);font-size:13px">로딩 중...</div></div>
+        <iframe id="iframe-cafe" src="about:blank" style="position:absolute;inset:0;opacity:0" onload="onLoad('cafe')"></iframe>
       </div>
-
-      <!-- 스레드 -->
       <div class="page" id="page-threads">
-        <div class="loading" id="loading-threads">
-          <div class="spinner"></div>
-          <div class="loading-text">스레드 자동화 로딩 중...</div>
-        </div>
-        <iframe id="iframe-threads" src="about:blank" onload="onLoad('threads')"></iframe>
+        <div class="loading" id="loading-threads"><div class="spinner"></div><div style="color:var(--text2);font-size:13px">로딩 중...</div></div>
+        <iframe id="iframe-threads" src="about:blank" style="position:absolute;inset:0;opacity:0" onload="onLoad('threads')"></iframe>
       </div>
     </div>
   </div>
 </div>
 
 <script>
-const URLS = {
-  blog: '/blog',
-  cafe: '/cafe',
-  threads: 'https://zheiia-thread.up.railway.app/'
-}
+const URLS = { blog: '/blog', cafe: '/cafe', threads: 'https://zheiia-thread.up.railway.app/' }
 const loaded = {}
-let currentPage = 'home'
+const PAGES = ['home','blog','cafe','threads']
 
-// ── 로그인 ──
 async function doLogin() {
   const code = document.getElementById('code-input').value.trim().toUpperCase()
   const errEl = document.getElementById('login-err')
   errEl.style.display = 'none'
-
   try {
-    const res = await fetch('/api/verify-code', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ code })
-    })
+    const res = await fetch('/api/verify-code', { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({code}) })
     const data = await res.json()
     if (data.success) {
       localStorage.setItem('hub_code', code)
@@ -479,13 +233,8 @@ async function checkSavedCode() {
   const saved = localStorage.getItem('hub_code')
   const savedVer = localStorage.getItem('hub_version')
   if (!saved) return
-
   try {
-    const res = await fetch('/api/verify-code', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ code: saved })
-    })
+    const res = await fetch('/api/verify-code', { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({code: saved}) })
     const data = await res.json()
     if (data.success && String(data.version) === String(savedVer)) {
       showApp()
@@ -501,51 +250,29 @@ function showApp() {
   document.getElementById('app').classList.add('show')
 }
 
-function doLogout() {
-  localStorage.removeItem('hub_code')
-  localStorage.removeItem('hub_version')
-  location.reload()
-}
+document.getElementById('code-input').addEventListener('keydown', e => { if (e.key === 'Enter') doLogin() })
 
-// 엔터키
-document.getElementById('code-input').addEventListener('keydown', e => {
-  if (e.key === 'Enter') doLogin()
-})
-
-// ── 페이지 전환 ──
 function switchPage(page) {
-  // 페이지
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'))
-  document.getElementById(`page-${page}`).classList.add('active')
-
-  // PC 사이드바
   document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'))
-  document.querySelectorAll('.nav-item')[['home','blog','cafe','threads'].indexOf(page)]?.classList.add('active')
-
-  // 모바일 탭
   document.querySelectorAll('.mobile-tab').forEach(t => t.classList.remove('active'))
-  document.querySelectorAll('.mobile-tab')[['home','blog','cafe','threads'].indexOf(page)]?.classList.add('active')
-
-  // iframe 로드
+  document.getElementById('page-' + page).classList.add('active')
+  const idx = PAGES.indexOf(page)
+  document.querySelectorAll('.nav-item')[idx]?.classList.add('active')
+  document.querySelectorAll('.mobile-tab')[idx]?.classList.add('active')
   if (page !== 'home' && !loaded[page]) {
-    document.getElementById(`loading-${page}`).style.display = 'flex'
-    document.getElementById(`iframe-${page}`).style.opacity = '0'
-    document.getElementById(`iframe-${page}`).src = URLS[page]
+    document.getElementById('loading-' + page).style.display = 'flex'
+    document.getElementById('iframe-' + page).src = URLS[page]
   }
-
-  currentPage = page
 }
 
 function onLoad(page) {
   if (loaded[page]) return
   loaded[page] = true
-  const el = document.getElementById(`loading-${page}`)
-  const iframe = document.getElementById(`iframe-${page}`)
-  if (el) el.style.display = 'none'
-  if (iframe) iframe.style.opacity = '1'
+  document.getElementById('loading-' + page).style.display = 'none'
+  document.getElementById('iframe-' + page).style.opacity = '1'
 }
 
-// 초기화
 checkSavedCode()
 </script>
 </body>
