@@ -293,7 +293,7 @@ footer{border-top:1px solid var(--border);padding:20px 2rem;text-align:center;fo
           <button class="copy-btn" style="flex:1;padding:10px;font-size:13px;font-weight:700" onclick="genCafeThumbnail(this)">🔄 재생성</button>
         </div>
         <div id="cafe-thumb-result" style="display:none;margin-top:10px">
-          <a id="cafe-thumb-download" download="thumbnail.png" style="display:block;margin-bottom:8px;text-align:center;padding:8px;background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-sm);color:var(--text2);font-size:12px;text-decoration:none">⬇ 이미지 저장</a>
+          <button onclick="downloadImg('cafe-thumb-img')" style="display:block;width:100%;margin-bottom:8px;text-align:center;padding:8px;background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-sm);color:var(--text2);font-size:12px;cursor:pointer;font-family:'Noto Sans KR',sans-serif">⬇ 이미지 저장</button>
           <img id="cafe-thumb-img" src="" style="width:100%;border-radius:var(--radius-sm);display:block" />
         </div>
       </div>
@@ -827,10 +827,12 @@ async function genCafeThumbnail(btn){
 
   try{
     const encoded=encodeURIComponent(imgPrompt);
-    const url=`https://image.pollinations.ai/prompt/${encoded}?width=1200&height=675&nologo=true&seed=${Date.now()}`;
+    const url=`https://image.pollinations.ai/prompt/${encoded}?width=1080&height=1080&nologo=true&seed=${Date.now()}`;
     const img=document.getElementById('cafe-thumb-img');
     img.onload=()=>{
-      document.getElementById('cafe-thumb-download').href=url;
+      const a2=document.getElementById('cafe-thumb-download');
+      a2.href=url;
+      a2.download='thumbnail.jpg';
       document.getElementById('cafe-thumb-result').style.display='block';
       btn.textContent=o;btn.disabled=false;
     };
@@ -853,6 +855,26 @@ function trackCoupang(){
 
 // ── 초기화 ──
 renderCats();renderTones();renderOpts();updateLen();
+
+async function downloadImg(imgId) {
+  const img = document.getElementById(imgId);
+  if (!img || !img.src) return;
+  try {
+    const res = await fetch(img.src);
+    const blob = await res.blob();
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'thumbnail.jpg';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  } catch(e) {
+    // fetch 실패시 새 탭으로 열기
+    window.open(img.src, '_blank');
+  }
+}
 </script>
 </body>
 </html>
