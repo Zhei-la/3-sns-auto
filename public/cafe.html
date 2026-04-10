@@ -1,0 +1,858 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="카페 글 생성기">
+<meta name="theme-color" content="#0e0e0f">
+<title>Zheila AI Auto — 네이버 카페 글 생성기</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;700&family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0e0e0f;--bg2:#161618;--bg3:#1e1e21;--bg4:#252528;
+  --gold:#c9a96e;--gold2:#e8c98a;--gold-dim:rgba(201,169,110,0.12);--gold-border:rgba(201,169,110,0.25);
+  --text:#f0ede8;--text2:#9e9b95;--text3:#5a5855;
+  --border:rgba(255,255,255,0.07);--border2:rgba(255,255,255,0.12);
+  --radius:14px;--radius-sm:8px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:'Noto Sans KR',sans-serif;min-height:100vh;line-height:1.6}
+
+.main{max-width:860px;margin:0 auto;padding:24px 1.5rem 80px}
+
+/* HERO */
+.hero{text-align:center;padding:48px 1rem 36px;background:radial-gradient(ellipse 60% 40% at 50% 0%, rgba(201,169,110,0.07) 0%, transparent 70%)}
+.hero-badge{display:inline-flex;align-items:center;gap:6px;background:var(--gold-dim);border:1px solid var(--gold-border);border-radius:99px;padding:5px 14px;font-size:11px;color:var(--gold);font-weight:500;letter-spacing:.05em;margin-bottom:20px}
+.hero-badge span{width:6px;height:6px;border-radius:50%;background:var(--gold);animation:pulse 2s infinite;display:inline-block}
+.hero h1{font-family:'Noto Serif KR',serif;font-size:clamp(24px,5vw,38px);font-weight:700;line-height:1.3;margin-bottom:12px;letter-spacing:-.5px}
+.hero h1 em{font-style:normal;color:var(--gold)}
+.hero p{font-size:14px;color:var(--text2);max-width:440px;margin:0 auto}
+
+/* SECTION CARD */
+.scard{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:1.5rem;margin-bottom:12px;transition:border-color .2s}
+.scard:hover{border-color:var(--border2)}
+.scard-head{display:flex;align-items:center;gap:10px;margin-bottom:1.1rem}
+.scard-num{width:24px;height:24px;border-radius:50%;background:var(--gold-dim);border:1px solid var(--gold-border);display:flex;align-items:center;justify-content:center;font-size:11px;color:var(--gold);font-weight:700;flex-shrink:0;text-align:center}
+.scard-title{font-size:12px;font-weight:500;color:var(--text2);letter-spacing:.05em;text-transform:uppercase}
+
+/* FIELDS */
+.field{margin-bottom:11px}
+.field:last-child{margin-bottom:0}
+.field label{display:block;font-size:12px;color:var(--text2);margin-bottom:5px;font-weight:500}
+.field input,.field textarea{width:100%;background:var(--bg3);border:1px solid var(--border2);border-radius:var(--radius-sm);padding:9px 12px;font-family:'Noto Sans KR',sans-serif;font-size:13px;color:var(--text);outline:none;transition:border-color .2s}
+.field input:focus,.field textarea:focus{border-color:var(--gold-border);background:var(--bg4)}
+.field textarea{resize:vertical;min-height:80px;line-height:1.7}
+.field input::placeholder,.field textarea::placeholder{color:var(--text3)}
+
+/* CHIPS */
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{padding:4px 12px;border-radius:99px;border:1px solid var(--border2);font-size:12px;background:var(--bg3);color:var(--text2);cursor:pointer;transition:all .15s;user-select:none;white-space:nowrap}
+.chip.on{background:var(--gold-dim);border-color:var(--gold-border);color:var(--gold);font-weight:500}
+.chip.multi.on{background:rgba(201,169,110,0.15);border-color:var(--gold-border);color:var(--gold)}
+
+/* 카테고리 커스텀 추가 */
+.add-row{display:flex;gap:8px;margin-top:10px}
+.add-row input{flex:1}
+.add-row button{padding:9px 14px;background:var(--gold-dim);border:1px solid var(--gold-border);border-radius:var(--radius-sm);color:var(--gold);font-size:12px;font-weight:700;cursor:pointer;white-space:nowrap;font-family:'Noto Sans KR',sans-serif;flex-shrink:0}
+
+/* 톤 그리드 */
+.tone-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+@media(max-width:520px){.tone-grid{grid-template-columns:repeat(3,1fr)}}
+.tone-btn{background:var(--bg3);border:1px solid var(--border2);border-radius:var(--radius-sm);padding:10px 8px;cursor:pointer;transition:all .2s;text-align:center;color:var(--text2);font-size:12px;font-weight:500;user-select:none}
+.tone-btn .ico{font-size:18px;display:block;margin-bottom:4px}
+.tone-btn.on{background:var(--gold-dim);border-color:var(--gold-border);color:var(--gold)}
+
+/* 글 길이 */
+.length-row{display:flex;align-items:center;gap:14px}
+.length-row input[type=range]{-webkit-appearance:none;width:100%;height:4px;background:var(--border2);border-radius:2px;outline:none;padding:0;border:none}
+.length-row input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;height:18px;background:var(--gold);border-radius:50%;cursor:pointer}
+.length-val{font-size:12px;color:var(--gold);font-weight:700;min-width:60px;text-align:right}
+
+/* 옵션 체크 그리드 */
+.opt-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
+@media(max-width:520px){.opt-grid{grid-template-columns:1fr}}
+.opt-item{display:flex;align-items:center;gap:10px;background:var(--bg3);border:1px solid var(--border2);border-radius:var(--radius-sm);padding:10px 12px;cursor:pointer;transition:all .15s;font-size:12px;color:var(--text2);user-select:none}
+.opt-item.on{background:var(--gold-dim);border-color:var(--gold-border);color:var(--gold)}
+.opt-check{width:16px;height:16px;border-radius:4px;border:1.5px solid var(--border2);display:flex;align-items:center;justify-content:center;font-size:10px;flex-shrink:0;transition:all .15s}
+.opt-item.on .opt-check{background:var(--gold);border-color:var(--gold);color:#0e0e0f}
+
+/* GEN BTN */
+.gen-btn{width:100%;padding:14px;border:none;border-radius:var(--radius-sm);background:linear-gradient(135deg,#c9a96e,#e8c98a);color:#0e0e0f;font-family:'Noto Sans KR',sans-serif;font-size:15px;font-weight:700;cursor:pointer;transition:all .2s;margin-top:4px;display:flex;align-items:center;justify-content:center;gap:8px}
+.gen-btn:hover{opacity:.85;transform:translateY(-1px)}
+.gen-btn:active{transform:translateY(0)}
+.gen-btn:disabled{opacity:.35;cursor:not-allowed;transform:none}
+.spin{width:14px;height:14px;border-radius:50%;flex-shrink:0;border:2px solid rgba(0,0,0,0.2);border-top-color:#0e0e0f;animation:spin .7s linear infinite;display:none}
+.gen-btn.loading .spin{display:block}
+.gen-btn.loading .btn-txt::before{content:'생성 중...'}
+.gen-btn:not(.loading) .btn-txt::before{content:'✦ 글 생성하기'}
+
+/* ERR */
+.err{color:#e57373;font-size:12px;margin-top:8px;display:none;padding:8px 12px;background:rgba(229,115,115,0.08);border-radius:var(--radius-sm);border:1px solid rgba(229,115,115,0.2)}
+
+/* RESULT */
+.result-section{display:none;margin-top:16px}
+.result-section.show{display:block}
+.result-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;flex-wrap:wrap;gap:8px}
+.result-header h3{font-family:'Noto Serif KR',serif;font-size:15px;color:var(--gold)}
+.result-actions{display:flex;gap:6px}
+.copy-btn{padding:5px 14px;font-size:12px;font-family:'Noto Sans KR',sans-serif;border:1px solid var(--border2);border-radius:var(--radius-sm);background:transparent;color:var(--text2);cursor:pointer;transition:all .15s}
+.copy-btn:hover{border-color:var(--gold-border);color:var(--gold)}
+
+/* 제목박스 */
+.title-box{background:var(--bg3);border:1px solid var(--border);border-left:3px solid var(--gold);border-radius:var(--radius-sm);padding:12px 16px;margin-bottom:10px}
+.title-box .lbl{font-size:10px;color:var(--text3);margin-bottom:5px;letter-spacing:.06em;text-transform:uppercase}
+.title-box .ttxt{font-size:16px;font-weight:700;color:var(--text);line-height:1.4}
+
+/* 태그 */
+.tag-wrap{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:10px}
+.gtag{background:rgba(201,169,110,0.1);border:1px solid var(--gold-border);border-radius:99px;padding:3px 10px;font-size:11px;color:var(--gold)}
+
+/* 본문 */
+.rbox{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-sm);padding:1.1rem;font-size:13.5px;line-height:2;white-space:pre-wrap;word-break:break-word;color:var(--text);max-height:520px;overflow-y:auto}
+.rbox.loading{color:var(--text3);display:flex;align-items:center;gap:10px;min-height:80px}
+.rbox::-webkit-scrollbar{width:4px}
+.rbox::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px}
+
+/* 쿠팡 위젯 */
+.widget-wrap{width:100%;overflow:hidden;margin:12px 0}
+
+/* 프로모 배너 */
+.promo-banner{display:flex;flex-direction:column;align-items:center;margin-top:12px;background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:1.5rem;text-align:center;text-decoration:none;transition:border-color .2s}
+.promo-banner:hover{border-color:var(--border2)}
+.promo-banner h3{font-family:'Noto Serif KR',serif;font-size:16px;margin-bottom:5px;color:var(--gold)}
+.promo-banner p{font-size:13px;color:var(--text2);margin-bottom:14px;line-height:1.7}
+.collab-chips{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;margin-bottom:14px}
+.collab-chip{padding:4px 10px;border-radius:99px;border:1px solid var(--border2);font-size:11px;background:var(--bg3);color:var(--text2);white-space:nowrap;text-align:center}
+.collab-btn{display:inline-flex;align-items:center;justify-content:center;gap:7px;background:var(--gold);color:#0e0e0f;padding:10px 24px;border-radius:8px;font-size:13px;font-weight:700;text-decoration:none;transition:all .2s;width:fit-content}
+.collab-btn:hover{background:var(--gold2)}
+
+/* 협업 섹션 */
+.collab-section{margin-top:12px;background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:1.5rem;text-align:center;display:flex;flex-direction:column;align-items:center}
+.collab-section h3{font-family:'Noto Serif KR',serif;font-size:16px;margin-bottom:5px;color:var(--gold)}
+.collab-section p{font-size:13px;color:var(--text2);margin-bottom:14px;line-height:1.7}
+
+/* footer */
+footer{border-top:1px solid var(--border);padding:20px 2rem;text-align:center;font-size:12px;color:var(--text3);line-height:2}
+
+.thumb-style-btn{padding:6px 4px;border-radius:var(--radius-sm);border:1px solid var(--border2);font-size:11px;background:var(--bg2);color:var(--text2);cursor:pointer;text-align:center;transition:all .15s;user-select:none}
+.thumb-style-btn.on{background:var(--gold-dim);border-color:var(--gold-border);color:var(--gold);font-weight:700}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+@keyframes spin{to{transform:rotate(360deg)}}
+@media(max-width:560px){
+  .main{padding:0 1rem 60px}
+  .promo-grid{grid-template-columns:1fr!important}
+}
+</style>
+</head>
+<body>
+<main class="main">
+
+  <!-- HERO -->
+  <div class="hero">
+    <div class="hero-badge"><span></span>AI 카페 글 자동 생성</div>
+    <h1>네이버 카페 글,<br><em>10초</em>면 완성됩니다</h1>
+    <p>카테고리·톤·옵션 설정하면<br>AI가 카페 맞춤 글을 작성해드려요</p>
+  </div>
+
+  <!-- 쿠팡 위젯 1 -->
+  <div class="widget-wrap" style="pointer-events:none">
+    <iframe style="pointer-events:auto" src="https://ads-partners.coupang.com/widgets.html?id=979545&template=carousel&trackingCode=AF5722914&subId=&width=728&height=120&tsource=" width="100%" height="120" frameborder="0" scrolling="no" referrerpolicy="unsafe-url" browsingtopics></iframe>
+  </div>
+
+  <!-- STEP 1: 카테고리 -->
+  <div class="scard">
+    <div class="scard-head">
+      <div class="scard-num">1</div>
+      <div class="scard-title">카테고리 선택 (복수 선택)</div>
+    </div>
+    <div class="chips" id="catChips"></div>
+    <div style="margin-top:8px;font-size:11px;color:var(--text3)">
+      탭 — 선택/해제 &nbsp;|&nbsp; 모바일: 꾹 누르기 &nbsp;|&nbsp; PC: 더블클릭 → 삭제
+    </div>
+    <div class="add-row">
+      <input type="text" id="customCat" placeholder="직접 카테고리 추가 (엔터)">
+      <button onclick="addCat()">추가</button>
+    </div>
+  </div>
+
+  <!-- STEP 2: 주제/키워드 -->
+  <div class="scard">
+    <div class="scard-head">
+      <div class="scard-num">2</div>
+      <div class="scard-title">주제 & 키워드</div>
+    </div>
+    <div class="field">
+      <textarea id="keywords" placeholder="글의 주제나 핵심 키워드를 입력하세요&#10;예) 강아지 슬개골 수술 후기, 비용 50만원, 회복기간 2주"></textarea>
+    </div>
+    <div class="field">
+      <label>추가 정보 <span style="color:var(--text3);font-weight:400">(꼭 넣고 싶은 내용, 경험, 가격 등 — 선택사항)</span></label>
+      <textarea id="extra" placeholder="예) 수술 전날 금식 필수, 병원 이름은 안 밝힘, 회복기간에 계단 금지라고 했음, 비용은 보험 적용 전 50만원"></textarea>
+    </div>
+  </div>
+
+  <!-- STEP 3: 글 설정 -->
+  <div class="scard">
+    <div class="scard-head">
+      <div class="scard-num">3</div>
+      <div class="scard-title">글 설정</div>
+    </div>
+
+    <div class="field">
+      <label>글 톤</label>
+      <div class="tone-grid" id="toneGrid"></div>
+    </div>
+
+    <div class="field" style="margin-top:13px">
+      <label>글 길이</label>
+      <div class="length-row">
+        <span style="font-size:12px;color:var(--text3)">짧게</span>
+        <input type="range" id="lengthSlider" min="1" max="5" value="3" step="1" oninput="updateLen()">
+        <span style="font-size:12px;color:var(--text3)">길게</span>
+        <span class="length-val" id="lenVal">보통</span>
+      </div>
+    </div>
+
+    <div class="field" style="margin-top:13px">
+      <label>추가 옵션</label>
+      <div class="opt-grid" id="optGrid"></div>
+    </div>
+  </div>
+
+  <!-- 생성 버튼 -->
+  <button class="gen-btn" id="genBtn" onclick="generate()">
+    <div class="spin"></div>
+    <span class="btn-txt"></span>
+  </button>
+  <div class="err" id="err"></div>
+
+  <!-- 결과 -->
+  <div class="result-section" id="resultSection">
+    <!-- 생성 중 -->
+    <div id="cafe-loading" style="display:none" class="rbox loading"><div class="spin"></div> 생성 중...</div>
+    <!-- 결과 본체 -->
+    <div id="cafe-result" style="display:none">
+      <!-- 쿠팡 위젯 -->
+      <div class="widget-wrap" style="pointer-events:none;margin-bottom:12px">
+        <iframe style="pointer-events:auto" src="https://ads-partners.coupang.com/widgets.html?id=979546&template=carousel&trackingCode=AF5722914&subId=&width=728&height=120&tsource=" width="100%" height="120" frameborder="0" scrolling="no" referrerpolicy="unsafe-url" browsingtopics></iframe>
+      </div>
+      <!-- 제목 재생성 -->
+      <div style="display:flex;justify-content:flex-end;margin-bottom:8px">
+        <button class="copy-btn" id="regenTitleBtn" onclick="regenTitles()">제목 재생성</button>
+      </div>
+      <!-- 제목 5개 -->
+      <div style="background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius-sm);padding:12px;margin-bottom:10px">
+        <div style="font-size:11px;color:var(--text3);margin-bottom:8px">제목 추천 5개</div>
+        <div id="titleList" style="display:flex;flex-direction:column;gap:4px"></div>
+      </div>
+      <!-- 본문 복사 + 재생성 -->
+      <div style="display:flex;gap:8px;margin-bottom:8px">
+        <button class="copy-btn" style="flex:1" onclick="copyBody()">본문 복사</button>
+        <button class="copy-btn" style="flex:1" onclick="generate()">본문 재생성</button>
+      </div>
+      <!-- 본문 -->
+      <div class="rbox" id="genBody"></div>
+      <!-- 키워드 복사 + 재생성 -->
+      <div style="display:flex;gap:8px;margin:8px 0">
+        <button class="copy-btn" style="flex:1" onclick="copyKeywords()">키워드 복사</button>
+        <button class="copy-btn" style="flex:1" onclick="regenKeywords()">키워드 재생성</button>
+      </div>
+      <!-- 키워드 -->
+      <div id="kwBox" style="display:none;background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius-sm);padding:12px">
+        <div style="font-size:11px;color:var(--text3);margin-bottom:6px">SEO 키워드 추천</div>
+        <div id="kwList" style="font-size:13px;color:var(--text2);line-height:2"></div>
+      </div>
+      <!-- 쿠팡 위젯 3 -->
+      <div style="width:100%;overflow:hidden;margin:12px 0;pointer-events:none">
+        <iframe style="pointer-events:auto" src="https://ads-partners.coupang.com/widgets.html?id=979545&template=carousel&trackingCode=AF5722914&subId=&width=728&height=120&tsource=" width="100%" height="120" frameborder="0" scrolling="no" referrerpolicy="unsafe-url" browsingtopics></iframe>
+      </div>
+
+      <!-- 썸네일 생성 -->
+      <div style="margin-top:12px;background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius-sm);padding:14px">
+        <div style="font-size:12px;color:var(--gold);font-weight:700;margin-bottom:10px">🖼 썸네일 생성</div>
+        <div style="font-size:11px;color:var(--text3);margin-bottom:8px">스타일 선택</div>
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-bottom:10px" id="cafe-thumb-styles">
+          <div class="thumb-style-btn on" data-style="blog" onclick="selectCafeThumbStyle(this)">📝 텍스트형</div>
+          <div class="thumb-style-btn" data-style="food" onclick="selectCafeThumbStyle(this)">🍽 음식/맛집</div>
+          <div class="thumb-style-btn" data-style="person" onclick="selectCafeThumbStyle(this)">👤 실사 인물</div>
+          <div class="thumb-style-btn" data-style="anime" onclick="selectCafeThumbStyle(this)">🎨 애니메이션</div>
+          <div class="thumb-style-btn" data-style="minimal" onclick="selectCafeThumbStyle(this)">◻ 미니멀</div>
+          <div class="thumb-style-btn" data-style="auto" onclick="selectCafeThumbStyle(this)">✨ AI 자동</div>
+        </div>
+        <div style="font-size:11px;color:var(--text3);margin-bottom:5px">추가 설명 <span style="opacity:.6">(선택사항)</span></div>
+        <textarea id="cafe-thumb-prompt" placeholder="예) 따뜻한 카페 분위기, 여성 20대, 봄 느낌" style="width:100%;background:var(--bg2);border:1px solid var(--border2);border-radius:var(--radius-sm);padding:8px 10px;color:var(--text);font-size:12px;font-family:'Noto Sans KR',sans-serif;resize:none;height:60px;outline:none;margin-bottom:8px"></textarea>
+        <div style="display:flex;gap:8px;margin-bottom:8px">
+          <button class="copy-btn" style="flex:1;padding:10px;font-size:13px;font-weight:700;background:var(--gold-dim);border-color:var(--gold-border);color:var(--gold)" onclick="genCafeThumbnail(this)">🖼 썸네일 생성</button>
+          <button class="copy-btn" style="flex:1;padding:10px;font-size:13px;font-weight:700" onclick="genCafeThumbnail(this)">🔄 재생성</button>
+        </div>
+        <div id="cafe-thumb-result" style="display:none;margin-top:10px">
+          <a id="cafe-thumb-download" download="thumbnail.png" style="display:block;margin-bottom:8px;text-align:center;padding:8px;background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-sm);color:var(--text2);font-size:12px;text-decoration:none">⬇ 이미지 저장</a>
+          <img id="cafe-thumb-img" src="" style="width:100%;border-radius:var(--radius-sm);display:block" />
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 쿠팡 위젯 2 (생성 전) -->
+  <div class="widget-wrap" id="widget2-default" style="pointer-events:none">
+    <iframe style="pointer-events:auto" src="https://ads-partners.coupang.com/widgets.html?id=979546&template=carousel&trackingCode=AF5722914&subId=&width=728&height=120&tsource=" width="100%" height="120" frameborder="0" scrolling="no" referrerpolicy="unsafe-url" browsingtopics></iframe>
+  </div>
+
+  <!-- 블로그/스레드 자동화 배너 -->
+  <div class="promo-grid" style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px">
+    <a href="https://zhei-la.github.io/Blog-Auto-promotion/" target="_blank" rel="noopener" class="promo-banner" style="margin-top:0;display:flex;flex-direction:column;align-items:center">
+      <h3>블로그 자동화 · 대행</h3>
+      <p>블로그 관리가 부담스럽다면<br>저한테 맡겨봐요 👋</p>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:14px;width:100%">
+        <div class="collab-chip" style="text-align:center">가게·매장 운영자</div>
+        <div class="collab-chip" style="text-align:center">사업자·자영업자</div>
+        <div class="collab-chip" style="text-align:center">병원·클리닉·학원</div>
+        <div class="collab-chip" style="text-align:center">금융·부동산 종사자</div>
+        <div class="collab-chip" style="text-align:center">보험·재무 컨설팅</div>
+        <div class="collab-chip" style="text-align:center">글 쓸 시간 없는 분</div>
+      </div>
+      <div class="collab-btn" style="margin:0 auto">자세히 보기 →</div>
+    </a>
+    <a href="https://zhei-la.github.io/Threads-auto-landing/" target="_blank" rel="noopener" class="promo-banner" style="margin-top:0;display:flex;flex-direction:column;align-items:center">
+      <h3>스레드 자동화</h3>
+      <p>매일 올리기 너무 귀찮죠?<br>AI가 대신 올려드릴게요 🤖</p>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:14px;width:100%">
+        <div class="collab-chip" style="text-align:center">스레드 계정 운영자</div>
+        <div class="collab-chip" style="text-align:center">브랜드·매장 홍보</div>
+        <div class="collab-chip" style="text-align:center">SNS 자동화 원하는 분</div>
+        <div class="collab-chip" style="text-align:center">쿠팡파트너스</div>
+        <div class="collab-chip" style="text-align:center">글 소재 고민하시는 분</div>
+        <div class="collab-chip" style="text-align:center">매일 올리기 힘든 분</div>
+      </div>
+      <div class="collab-btn" style="margin:0 auto">자세히 보기 →</div>
+    </a>
+  </div>
+
+  <!-- 협업 섹션 -->
+  <div class="collab-section">
+    <h3>협업 및 제휴 문의</h3>
+    <p style="max-width:320px">광고 제휴, 기능 추가, 맞춤형 툴 제작 등<br>뭐든 편하게 말씀해주세요 😊</p>
+    <div class="collab-chips">
+      <div class="collab-chip">📢 광고 제휴</div>
+      <div class="collab-chip">🔧 기능 커스텀</div>
+      <div class="collab-chip">🤝 마케팅 협업</div>
+    </div>
+    <a class="collab-btn" href="https://open.kakao.com/o/siUe7xpi" target="_blank" rel="noopener">
+      💬 카카오톡으로 문의하기
+    </a>
+  </div>
+
+</main>
+
+<footer>
+  <span style="font-size:11px">이 포스팅은 쿠팡 파트너스 활동의 일환으로, 이에 따른 일정액의 수수료를 제공받습니다</span><br>
+  <strong style="color:var(--text2)">Zheila AI Auto</strong> — AI 네이버 카페 글 생성기
+</footer>
+
+<script>
+// ── 데이터 ──
+const DEFAULT_CATS = ['맘카페','육아','강아지','고양이','반려동물','재테크','주식','부동산','코인','절약','다이어트','건강','운동','헬스','먹방','여행','맛집','카페','요리','레시피','쇼핑','공동구매','리뷰','뷰티','패션','취업','직장','부업','프리랜서','창업','일상','수다','정보공유','질문','고민상담'];
+
+const TONES=[
+  {id:'friendly',label:'친근하게',ico:'😊'},
+  {id:'formal',label:'정중하게',ico:'🤝'},
+  {id:'review',label:'후기체',ico:'⭐'},
+  {id:'question',label:'질문체',ico:'🙋'},
+  {id:'info',label:'정보글',ico:'📌'},
+  {id:'emotional',label:'감성적으로',ico:'💕'},
+  {id:'humorous',label:'유머있게',ico:'😄'},
+  {id:'detailed',label:'상세하게',ico:'🔍'},
+];
+
+const OPTIONS=[
+  {id:'autoTitle',label:'제목 자동 생성',def:true},
+  {id:'tags',label:'태그 추천',def:true},
+  {id:'noAI',label:'AI티 없애기',def:true},
+  {id:'paragraphs',label:'문단 구분',def:true},
+  {id:'cta',label:'공감/댓글 유도',def:false},
+  {id:'personal',label:'개인 경험체',def:false},
+  {id:'emoji',label:'이모지 포함',def:false},
+  {id:'seo',label:'검색 최적화',def:false},
+];
+
+const LEN_LABELS=['아주 짧게','짧게','보통','길게','아주 길게'];
+const LEN_TOKENS=[300,500,800,1200,1800];
+
+// ── 상태 ──
+let allCats=[...DEFAULT_CATS];
+let selCats=new Set();
+let selTone='friendly';
+let selOpts=new Set(OPTIONS.filter(o=>o.def).map(o=>o.id));
+
+// ── 렌더 ──
+function renderCats(){
+  document.getElementById('catChips').innerHTML=allCats.map(c=>`
+    <div class="chip multi ${selCats.has(c)?'on':''}" 
+      id="chip-${c.replace(/[^a-z0-9]/gi,'_')}"
+      onclick="tapCat('${c}')"
+      ondblclick="dblCat(event,'${c}')"
+      ontouchstart="startHold(event,'${c}')" 
+      ontouchend="endHold()" 
+      ontouchmove="endHold()"
+      oncontextmenu="holdCat(event,'${c}')">
+      <span class="chip-label">${c}</span>
+      <span class="chip-x" id="x-${c.replace(/[^a-z0-9]/gi,'_')}" style="display:none;margin-left:4px;font-size:10px" onclick="removeX(event,'${c}')">✕</span>
+    </div>
+  `).join('');
+}
+
+function dblCat(e,cat){
+  e.preventDefault();e.stopPropagation();
+  selCats.delete(cat);
+  allCats=allCats.filter(c=>c!==cat);
+  delete showingX[cat];
+  renderCats();
+}
+
+let holdTimer=null;
+let showingX={}; // 어떤 칩이 X 보여주는지 추적
+
+function startHold(e,cat){
+  holdTimer=setTimeout(()=>{holdCat(e,cat);},500);
+}
+function endHold(){clearTimeout(holdTimer);}
+
+function holdCat(e,cat){
+  e.preventDefault();
+  const key=cat.replace(/[^a-z0-9]/gi,'_');
+  const xEl=document.getElementById('x-'+key);
+  if(!xEl)return;
+  if(showingX[cat]){
+    // X 숨기기
+    xEl.style.display='none';
+    showingX[cat]=false;
+  } else {
+    // X 보이기
+    xEl.style.display='inline';
+    showingX[cat]=true;
+  }
+}
+
+function tapCat(cat){
+  // X 보이는 상태면 탭해도 선택 안 됨
+  if(showingX[cat]) return;
+  selCats.has(cat)?selCats.delete(cat):selCats.add(cat);
+  renderCats();
+}
+
+function removeX(e,cat){
+  e.stopPropagation();
+  selCats.delete(cat);
+  allCats=allCats.filter(c=>c!==cat);
+  delete showingX[cat];
+  renderCats();
+}
+
+function renderTones(){
+  document.getElementById('toneGrid').innerHTML=TONES.map(t=>`
+    <div class="tone-btn ${selTone===t.id?'on':''}" onclick="selToneF('${t.id}')">
+      <span class="ico">${t.ico}</span>${t.label}
+    </div>
+  `).join('');
+}
+
+function renderOpts(){
+  document.getElementById('optGrid').innerHTML=OPTIONS.map(o=>`
+    <div class="opt-item ${selOpts.has(o.id)?'on':''}" onclick="toggleOpt('${o.id}')">
+      <div class="opt-check">${selOpts.has(o.id)?'✓':''}</div>
+      ${o.label}
+    </div>
+  `).join('');
+}
+
+// ── 인터랙션 ──
+function toggleCat(c){selCats.has(c)?selCats.delete(c):selCats.add(c);renderCats();}
+function selToneF(id){selTone=id;renderTones();}
+function toggleOpt(id){selOpts.has(id)?selOpts.delete(id):selOpts.add(id);renderOpts();}
+function addCat(){
+  const v=document.getElementById('customCat').value.trim();
+  if(!v)return;
+  if(!allCats.includes(v))allCats.push(v);
+  selCats.add(v);
+  document.getElementById('customCat').value='';
+  renderCats();
+}
+function updateLen(){
+  const v=parseInt(document.getElementById('lengthSlider').value)-1;
+  document.getElementById('lenVal').textContent=LEN_LABELS[v];
+}
+
+document.addEventListener('DOMContentLoaded',()=>{
+  document.getElementById('customCat').addEventListener('keydown',e=>{if(e.key==='Enter')addCat();});
+});
+
+// ── 프롬프트 ──
+function buildPrompt(){
+  const kw=document.getElementById('keywords').value.trim();
+  const cats=[...selCats];
+  const tone=TONES.find(t=>t.id===selTone);
+  const lenIdx=parseInt(document.getElementById('lengthSlider').value)-1;
+
+  const optMap={
+    autoTitle:'제목은 따로 생성 지침 따름',
+    tags:'관련 해시태그 5~8개',
+    noAI:'AI 티 절대 금지 — 사람이 직접 쓴 것처럼',
+    paragraphs:'문단 구분 + 문장 끝날 때마다 줄바꿈 필수',
+    cta:'마지막에 공감·댓글 유도 문구',
+    personal:'직접 경험한 것처럼 개인 경험담 형식',
+    emoji:'이모지 자연스럽게',
+    seo:'키워드 자연스럽게 반복'
+  };
+
+  const activeOpts=OPTIONS.filter(o=>selOpts.has(o.id)&&o.id!=='autoTitle').map(o=>optMap[o.id]);
+
+  return `너는 네이버 카페 이탈률 0%를 목표로 하는 콘텐츠 전문가야.
+
+━━━ 절대 규칙 ━━━
+- 뻔한 시작 절대 금지 ("안녕하세요", "오늘은 ~에 대해", "요즘 많이들" 등 클리셰 금지)
+- AI 티 절대 금지
+- 마침표 남발 금지
+- 광고·법률위반·플랫폼 제재 표현 절대 금지
+- 아래 금지어 절대 사용 금지:
+  최저가 특가 할인 무료증정 구매링크 협찬 광고 파트너스
+  완치 100%치료 기적 부작용없음 즉시효과
+  월1000만원 자동수익 확정수익 급등주 코인대박
+  불법 도박 성매매 마약 위조 해킹 토렌트
+
+━━━ 제목 5개 규칙 ━━━
+- 초초초강력 후킹 — 안 누르면 손해볼 것 같은 느낌
+- 숫자·반전·의문·공감·비밀공개 형식 활용
+- 금지어 포함 금지, 법률위반 표현 금지
+
+━━━ 본문 규칙 ━━━
+- 첫 3~4줄: 끝까지 읽고 싶게 만드는 초강력 후킹 (핵심은 뒤에)
+- 제일 중요한 정보·결론은 후반부에 배치
+- 가독성 구조: 3~4문장 → 빈 줄 → 3~4문장 → 빈 줄 반복
+- 문장 끝날 때마다 줄바꿈
+- 중간중간 궁금증·공감 요소 삽입
+- 위트·유머 자연스럽게
+
+카테고리: ${cats.length?cats.join(', '):'일반'}
+주제/키워드: ${kw||'자유 주제'}
+꼭 포함할 내용: ${extra||'없음'}
+글 톤: ${tone?.label||'친근하게'}
+분량: 약 ${LEN_TOKENS[lenIdx]}자 내외
+
+추가 지침:
+${activeOpts.map(o=>`- ${o}`).join('\n')}
+
+반드시 아래 형식으로만 출력:
+[TITLES]
+1. 제목후보1
+2. 제목후보2
+3. 제목후보3
+4. 제목후보4
+5. 제목후보5
+
+[TAGS]
+#태그1 #태그2 #태그3 ...
+
+[BODY]
+본문내용
+
+[KEYWORDS]
+키워드1
+키워드2
+(10개 이상, 네이버 검색 기반 실제 검색할 법한 형태로)
+
+각 섹션 [TITLES], [TAGS], [BODY], [KEYWORDS] 마커로 반드시 구분.
+제목 5개는 각각 다르게 — 궁금증 유발형, 공감형, 정보형, 유머형, 반전형.
+각 제목 아래 클릭율·후킹력·SEO 종합 점수 (10점 만점) 표시.
+형식: 제목 다음 줄에 "점수: X.X" 형태로.`;
+}
+
+function buildTitleOnlyPrompt(){
+  const kw=document.getElementById('keywords').value.trim();
+  const cats=[...selCats];
+  const tone=TONES.find(t=>t.id===selTone);
+  return `네이버 카페 글 제목 5개만 만들어줘.
+카테고리: ${cats.length?cats.join(', '):'일반'}
+주제/키워드: ${kw||'자유 주제'}
+톤: ${tone?.label||'친근하게'}
+
+조건:
+- 뻔한 제목 금지
+- 궁금증 유발형, 공감형, 정보형, 유머형, 반전형으로 각각 다르게
+- 클릭하고 싶게 만들기
+
+반드시 아래 형식으로만:
+1. 제목1
+점수: X.X
+2. 제목2
+점수: X.X
+3. 제목3
+점수: X.X
+4. 제목4
+점수: X.X
+5. 제목5
+점수: X.X
+
+(점수는 클릭율·후킹력·SEO 종합 10점 만점)`;
+}
+
+function parseResult(text){
+  const tm=text.match(/\[TITLES\]\s*([\s\S]*?)(?=\[TAGS\]|\[BODY\]|\[KEYWORDS\]|$)/);
+  const gm=text.match(/\[TAGS\]\s*([\s\S]*?)(?=\[BODY\]|\[KEYWORDS\]|$)/);
+  const bm=text.match(/\[BODY\]\s*([\s\S]*?)(?=\[KEYWORDS\]|$)/);
+  const km=text.match(/\[KEYWORDS\]\s*([\s\S]*?)$/);
+  return{
+    titles:tm?tm[1].trim():'',
+    tags:gm?gm[1].trim():'',
+    body:bm?bm[1].trim():text,
+    keywords:km?km[1].trim():''
+  };
+}
+
+function renderTitles(titlesText){
+  const rawLines=titlesText.split('\n').filter(l=>l.trim());
+  const titles=[];
+  let cur={title:'',score:''};
+  rawLines.forEach(l=>{
+    const scoreMatch=l.match(/점수\s*:\s*([\d.]+)/i);
+    const titleMatch=l.match(/^\d+\.\s*(.+)/);
+    if(titleMatch){
+      if(cur.title) titles.push({...cur});
+      cur={title:titleMatch[1].trim(),score:''};
+    } else if(scoreMatch){
+      cur.score=scoreMatch[1];
+    }
+  });
+  if(cur.title) titles.push(cur);
+
+  const el=document.getElementById('titleList');
+  el.innerHTML=titles.map((t,i)=>`
+    <div style="background:var(--bg3);border-radius:var(--radius-sm);padding:8px 12px;border:1px solid var(--border)">
+      <div style="display:flex;align-items:flex-start;gap:8px">
+        <span style="font-size:11px;color:var(--text3);flex-shrink:0;margin-top:2px">${i+1}</span>
+        <span style="font-size:13px;font-weight:500;color:var(--text);flex:1;line-height:1.5" class="title-text">${t.title}</span>
+        <button class="copy-title-btn" style="padding:3px 10px;font-size:11px;background:transparent;border:1px solid var(--border2);border-radius:var(--radius-sm);color:var(--text2);cursor:pointer;white-space:nowrap;font-family:'Noto Sans KR',sans-serif;flex-shrink:0">복사</button>
+      </div>
+      ${t.score?`<div style="margin-top:4px;margin-left:19px;font-size:11px;color:var(--gold);font-weight:700">점수: ${t.score} / 10</div>`:''}
+    </div>
+  `).join('');
+
+  // 복사 버튼 — 제목만 복사 (점수 제외)
+  el.querySelectorAll('.copy-title-btn').forEach((btn,i)=>{
+    btn.addEventListener('click',()=>{
+      const txt=el.querySelectorAll('.title-text')[i].textContent;
+      copyText(txt, btn);
+    });
+  });
+}
+
+async function regenTitles(){
+  const btn=document.getElementById('regenTitleBtn');
+  btn.textContent='생성 중...';btn.disabled=true;
+  try{
+    const result=await callAPI(buildTitleOnlyPrompt());
+    renderTitles(result);
+  }catch(e){
+    btn.textContent='오류';
+  }
+  btn.textContent='제목 재생성';btn.disabled=false;
+}
+
+// ── API 호출 ──
+async function callAPI(prompt){
+  const r=await fetch('/api/generate',{
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({
+      model:'gpt-4o-mini',
+      messages:[{role:'user',content:prompt}],
+      temperature:0.85,
+      max_tokens:Math.round(LEN_TOKENS[parseInt(document.getElementById('lengthSlider').value)-1]*2.5)
+    })
+  });
+  if(!r.ok){const e=await r.json();throw new Error(e.error?.message||`HTTP ${r.status}`)}
+  const d=await r.json();
+  return d.choices[0].message.content.trim();
+}
+
+async function generate(){
+  const kw=document.getElementById('keywords').value.trim();
+  const errEl=document.getElementById('err');
+  errEl.style.display='none';
+
+  if(!kw&&selCats.size===0){errEl.textContent='카테고리나 주제/키워드를 입력해주세요';errEl.style.display='block';return;}
+
+  const btn=document.getElementById('genBtn');
+  btn.classList.add('loading');btn.disabled=true;
+
+  // 로딩 표시
+  document.getElementById('cafe-loading').style.display='flex';
+  document.getElementById('cafe-result').style.display='none';
+  document.getElementById('resultSection').classList.add('show');
+  document.getElementById('resultSection').scrollIntoView({behavior:'smooth',block:'start'});
+
+  try{
+    const result=await callAPI(buildPrompt());
+    const parsed=parseResult(result);
+
+    renderTitles(parsed.titles);
+    document.getElementById('genBody').textContent=parsed.body;
+
+    if(parsed.keywords){
+      document.getElementById('kwList').textContent=parsed.keywords;
+      document.getElementById('kwBox').style.display='block';
+    }
+
+    document.getElementById('cafe-loading').style.display='none';
+    document.getElementById('cafe-result').style.display='block';
+  }catch(e){
+    let msg='🔧 점검 중입니다 — 빠른 점검 후 돌아오겠습니다';
+    if(e.message.includes('429'))msg='⏳ 요청 한도 초과 — 잠시 후 다시 시도해주세요';
+    errEl.textContent=msg;errEl.style.display='block';
+    document.getElementById('cafe-loading').style.display='none';
+  }
+
+  btn.classList.remove('loading');btn.disabled=false;
+}
+
+function copyText(text, btn){
+  const o = btn.textContent;
+  if(navigator.clipboard && navigator.clipboard.writeText){
+    navigator.clipboard.writeText(text).then(()=>{
+      btn.textContent='복사됨!';setTimeout(()=>{btn.textContent=o},1500);
+    }).catch(()=>{
+      fallbackCopy(text);
+      btn.textContent='복사됨!';setTimeout(()=>{btn.textContent=o},1500);
+    });
+  } else {
+    fallbackCopy(text);
+    btn.textContent='복사됨!';setTimeout(()=>{btn.textContent=o},1500);
+  }
+}
+
+function fallbackCopy(text){
+  const ta=document.createElement('textarea');
+  ta.value=text;
+  ta.style.cssText='position:fixed;top:0;left:0;opacity:0';
+  document.body.appendChild(ta);
+  ta.focus();ta.select();
+  document.execCommand('copy');
+  document.body.removeChild(ta);
+}
+
+function copyAll(){
+  const btn=event.target;
+  const titles=[...document.querySelectorAll('.title-text')].map(t=>t.textContent).join('\n');
+  const tags=[...document.querySelectorAll('.gtag')].map(t=>t.textContent).join(' ');
+  const body=document.getElementById('genBody').textContent;
+  const kw=document.getElementById('kwList').textContent;
+  const text=`[제목 후보]\n${titles}\n\n${body}${tags?'\n\n'+tags:''}${kw?'\n\n[키워드]\n'+kw:''}`;
+  copyText(text, btn);
+}
+
+function copyBody(){
+  const btn=event.target;
+  const body=document.getElementById('genBody').textContent;
+  copyText(body, btn);
+}
+
+async function regenKeywords(){
+  const btn=event.target;const o=btn.textContent;
+  btn.textContent='생성 중...';btn.disabled=true;
+  try{
+    const kw=document.getElementById('keywords').value.trim();
+    const cats=[...selCats];
+    const result=await callAPI(`네이버 카페 SEO 키워드 10개 생성. 한줄에 하나씩. 카테고리: ${cats.join(',')||'일반'} 주제: ${kw}`);
+    document.getElementById('kwList').textContent=result;
+    document.getElementById('kwBox').style.display='block';
+  }catch(e){}
+  btn.textContent=o;btn.disabled=false;
+}
+
+function copyTitles(){
+  const btn=event.target;
+  const titles=[...document.querySelectorAll('#titleList .title-text')].map(t=>t.textContent).join('\n');
+  copyText(titles,btn);
+}
+
+function copyKeywords(){
+  const btn=event.target;
+  const text=document.getElementById('kwList').textContent;
+  copyText(text,btn);
+}
+
+function selectCafeThumbStyle(el){
+  document.querySelectorAll('#cafe-thumb-styles .thumb-style-btn').forEach(b=>b.classList.remove('on'));
+  el.classList.add('on');
+}
+
+async function genCafeThumbnail(btn){
+  const style=document.querySelector('#cafe-thumb-styles .thumb-style-btn.on')?.dataset.style||'auto';
+  const userPrompt=document.getElementById('cafe-thumb-prompt').value.trim();
+  const title=document.querySelector('#titleList .title-text')?.textContent||'';
+  const body=document.getElementById('genBody')?.textContent?.slice(0,200)||'';
+
+  const o=btn.textContent;btn.textContent='생성 중...';btn.disabled=true;
+
+  const styleMap={
+    blog:'Korean blog thumbnail, bold text overlay, clean modern layout, white background',
+    food:'Korean food photography, delicious food close-up, warm lighting, appetizing',
+    person:'Korean lifestyle photo, natural person, warm soft atmosphere, candid moment',
+    anime:'Korean webtoon illustration, cute anime style, vibrant colors, clean line art',
+    minimal:'minimalist design, simple geometric shapes, clean white space, elegant modern',
+    auto:'Korean blog thumbnail, professional, eye-catching, vibrant colors'
+  };
+
+  let imgPrompt='';
+  if(userPrompt){
+    imgPrompt=`Korean blog thumbnail. ${styleMap[style]}. ${userPrompt}. High quality, wide format.`;
+  } else {
+    try{
+      const promptRes=await callAPI(`다음 카페 글에 어울리는 썸네일 이미지 영어 프롬프트를 딱 한 문장으로 만들어줘.
+제목: ${title}
+내용: ${body}
+스타일: ${styleMap[style]}
+영어로만, 한 문장으로만 출력.`);
+      imgPrompt=promptRes.trim()+`, ${styleMap[style]}, high quality`;
+    }catch(e){
+      imgPrompt=`Korean blog thumbnail, ${title}, ${styleMap[style]}`;
+    }
+  }
+
+  try{
+    const encoded=encodeURIComponent(imgPrompt);
+    const url=`https://image.pollinations.ai/prompt/${encoded}?width=1200&height=675&nologo=true&seed=${Date.now()}`;
+    const img=document.getElementById('cafe-thumb-img');
+    img.onload=()=>{
+      document.getElementById('cafe-thumb-download').href=url;
+      document.getElementById('cafe-thumb-result').style.display='block';
+      btn.textContent=o;btn.disabled=false;
+    };
+    img.onerror=()=>{
+      // 재시도
+      img.src=url+'&retry=1';
+      img.onerror=()=>{alert('이미지 생성 실패 — 다시 시도해주세요');btn.textContent=o;btn.disabled=false;};
+    };
+    img.src=url;
+    return;
+  }catch(e){
+    alert('🔧 점검 중입니다. 잠시 후 다시 시도해주세요');
+  }
+  btn.textContent=o;btn.disabled=false;
+}
+
+function trackCoupang(){
+  fetch('https://blog-draft-production.up.railway.app/api/track/coupang',{method:'POST'}).catch(()=>{});
+}
+
+// ── 초기화 ──
+renderCats();renderTones();renderOpts();updateLen();
+</script>
+</body>
+</html>
