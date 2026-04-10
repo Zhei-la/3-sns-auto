@@ -12,9 +12,24 @@ app.use((req, res, next) => {
 });
 app.use(express.static(path.join(__dirname, 'public')));
 
+// 초대코드
+const INVITE_CODE = process.env.ADMIN_PASSWORD || 'AITOOLS1';
+const CODE_VERSION = process.env.CODE_VERSION || '1';
+
 app.get('/', (req, res) => res.sendFile(path.join(__dirname, 'public', 'index.html')));
 app.get('/blog', (req, res) => res.sendFile(path.join(__dirname, 'public', 'blog.html')));
 app.get('/cafe', (req, res) => res.sendFile(path.join(__dirname, 'public', 'cafe.html')));
+
+// 코드 검증
+app.post('/api/verify-code', (req, res) => {
+  const { code } = req.body;
+  const upper = (code || '').trim().toUpperCase();
+  if (upper === INVITE_CODE.toUpperCase()) {
+    res.json({ success: true, version: CODE_VERSION });
+  } else {
+    res.json({ success: false });
+  }
+});
 
 // OpenAI 프록시
 app.post('/api/generate', async (req, res) => {
