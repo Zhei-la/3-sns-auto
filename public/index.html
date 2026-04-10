@@ -200,6 +200,7 @@ body {
   transition: all .15s;
   border-left: 3px solid transparent;
   margin: 1px 0;
+  justify-content: center;
 }
 .nav-item:hover { color: var(--text); background: rgba(255,255,255,0.03); }
 .nav-item.active {
@@ -369,16 +370,13 @@ body {
         <span class="nav-icon">🏠</span> 홈
       </div>
       <div class="nav-item" onclick="switchPage('blog')">
-        <span class="nav-icon">📝</span> 블로그 원고
-        <span class="nav-badge">AI</span>
+        <span class="nav-icon">📝</span> 네이버 블로그
       </div>
       <div class="nav-item" onclick="switchPage('cafe')">
-        <span class="nav-icon">☕</span> 카페 글
-        <span class="nav-badge">AI</span>
+        <span class="nav-icon">☕</span> 네이버 카페
       </div>
       <div class="nav-item" onclick="switchPage('threads')">
-        <span class="nav-icon">🧵</span> 스레드 자동화
-        <span class="nav-badge">AUTO</span>
+        <span class="nav-icon">🧵</span> 스레드
       </div>
       <div class="sidebar-bottom">
         <div class="logout-btn" onclick="doLogout()">로그아웃</div>
@@ -395,18 +393,18 @@ body {
           <div class="home-cards">
             <div class="home-card" onclick="switchPage('blog')">
               <div class="home-card-icon">📝</div>
-              <div class="home-card-name">블로그 원고</div>
-              <div class="home-card-desc">SEO 최적화 원고 자동 생성</div>
+              <div class="home-card-name">네이버 블로그</div>
+              <div class="home-card-desc">네이버 블로그 원고를 AI가 자동 작성</div>
             </div>
             <div class="home-card" onclick="switchPage('cafe')">
               <div class="home-card-icon">☕</div>
-              <div class="home-card-name">카페 글</div>
-              <div class="home-card-desc">카테고리별 카페 글 생성</div>
+              <div class="home-card-name">네이버 카페</div>
+              <div class="home-card-desc">네이버 카페 글을 AI가 자동 작성</div>
             </div>
             <div class="home-card" onclick="switchPage('threads')">
               <div class="home-card-icon">🧵</div>
-              <div class="home-card-name">스레드 자동화</div>
-              <div class="home-card-desc">Threads 자동 발행 시스템</div>
+              <div class="home-card-name">스레드</div>
+              <div class="home-card-desc">쿠팡 링크 삽입 가능한 스레드 자동화</div>
             </div>
           </div>
         </div>
