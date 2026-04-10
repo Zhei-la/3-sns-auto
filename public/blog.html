@@ -143,7 +143,7 @@ body{background:var(--bg);color:var(--text);font-family:'Noto Sans KR',sans-seri
 .copy-btn{
   margin-top:7px;padding:5px 14px;font-size:12px;font-family:'Noto Sans KR',sans-serif;
   border:1px solid var(--border2);border-radius:var(--radius-sm);
-  background:transparent;color:var(--text2);cursor:pointer;transition:all .15s;display:none;
+  background:transparent;color:var(--text2);cursor:pointer;transition:all .15s;display:inline-block;
 }
 .copy-btn:hover{border-color:var(--gold-border);color:var(--gold)}
 
@@ -684,10 +684,13 @@ async function genThumbnail(p,btn){
 
   try{
     const encoded=encodeURIComponent(imgPrompt);
-    const url=`https://image.pollinations.ai/prompt/${encoded}?width=1200&height=675&nologo=true&seed=${Date.now()}`;
+    const url=`https://image.pollinations.ai/prompt/${encoded}?width=1080&height=1080&nologo=true&seed=${Date.now()}`;
     const img=document.getElementById('thumb-img-'+p);
     img.onload=()=>{
-      document.getElementById('thumb-download-'+p).href=url;
+      // 직접 다운로드
+      const a=document.getElementById('thumb-download-'+p);
+      a.href=url;
+      a.download='thumbnail.jpg';
       document.getElementById('thumb-result-'+p).style.display='block';
       btn.textContent=o;btn.disabled=false;
     };
@@ -1048,7 +1051,7 @@ async function generateAll(){
               <button class="copy-btn" style="flex:1;padding:10px;font-size:13px;font-weight:700" onclick="genThumbnail('${p}',this)">🔄 재생성</button>
             </div>
             <div id="thumb-result-${p}" style="display:none;margin-top:10px">
-              <a id="thumb-download-${p}" download="thumbnail.png" style="display:block;margin-bottom:8px;text-align:center;padding:8px;background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-sm);color:var(--text2);font-size:12px;text-decoration:none">⬇ 이미지 저장</a>
+              <button onclick="downloadImg('thumb-img-${p}')" style="display:block;width:100%;margin-bottom:8px;text-align:center;padding:8px;background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-sm);color:var(--text2);font-size:12px;cursor:pointer;font-family:'Noto Sans KR',sans-serif">⬇ 이미지 저장</button>
               <img id="thumb-img-${p}" src="" style="width:100%;border-radius:var(--radius-sm);display:block" />
             </div>
           </div>
@@ -1150,6 +1153,26 @@ async function generateAll(){
   }));
 
   btn.disabled=false;btn.textContent='✦ 다시 생성하기';
+}
+
+async function downloadImg(imgId) {
+  const img = document.getElementById(imgId);
+  if (!img || !img.src) return;
+  try {
+    const res = await fetch(img.src);
+    const blob = await res.blob();
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'thumbnail.jpg';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  } catch(e) {
+    // fetch 실패시 새 탭으로 열기
+    window.open(img.src, '_blank');
+  }
 }
 </script>
 </body>
