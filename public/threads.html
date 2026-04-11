@@ -1219,7 +1219,8 @@ async function genPost() {
       body: JSON.stringify({model:'gpt-4o-mini', messages:[{role:'user', content:prompt}], temperature:0.85, max_tokens:500})
     });
     var data = await res.json();
-    if (data.error) throw new Error(data.error.message || '생성 실패');
+    if (data.error) throw new Error(typeof data.error === 'string' ? data.error : (data.error.message || JSON.stringify(data.error)));
+    if (!data.choices || !data.choices[0]) throw new Error('응답 오류 — 잠시 후 다시 시도해줘');
     var text = data.choices[0].message.content.trim();
     document.getElementById('postText').value = text;
     toast('글 생성 완료!');
@@ -1242,7 +1243,8 @@ async function genComment() {
       body: JSON.stringify({model:'gpt-4o-mini', messages:[{role:'user', content:prompt}], temperature:0.85, max_tokens:200})
     });
     var data = await res.json();
-    if (data.error) throw new Error(data.error.message || '생성 실패');
+    if (data.error) throw new Error(typeof data.error === 'string' ? data.error : (data.error.message || JSON.stringify(data.error)));
+    if (!data.choices || !data.choices[0]) throw new Error('응답 오류 — 잠시 후 다시 시도해줘');
     var text = data.choices[0].message.content.trim();
     document.getElementById('commentText').value = text;
     toast('댓글 생성 완료!');
