@@ -1389,21 +1389,33 @@ async function genComment() {
     var commentPrompt = document.getElementById('userCommentPrompt') ? document.getElementById('userCommentPrompt').value.trim() : '';
     var toneStr = (fixedTones.length ? fixedTones.join(', ') + ', ' : '') + tone;
     var postContent = document.getElementById('postText') ? document.getElementById('postText').value.trim() : '';
-    var prompt = `스레드 게시글 작성자가 자기 글에 직접 다는 댓글을 써줘.
+    var prompt = `아래는 내가 스레드에 올린 글이야.
+이 글에 내가 직접 다는 댓글을 써줘.
 
-${postContent ? '내가 쓴 글:\n' + postContent + '\n' : '주제: ' + topic + '\n'}
+내 글:
+${postContent || ('주제: ' + topic)}
+
 말투: ${toneStr}${commentPrompt ? '\n추가 지침: ' + commentPrompt : ''}
 
-━━━ 댓글 규칙 ━━━
-- 시점: 글쓴이 본인이 자기 글에 다는 댓글
-- "저도요", "맞아요", "공감해요", "그렇죠" 같은 제3자 반응 절대 금지
-- 내가 쓴 글에서 못 다한 말, 추가 감정, 뒷얘기를 이어가는 느낌
-- 또는 읽는 사람이 댓글 달고 싶게 여지 남기기
-- 마침표(.) 절대 금지
+━━━ 반드시 지킬 것 ━━━
+- 나(글쓴이)가 내 글 밑에 다는 댓글임
+- 글의 내용을 읽고, 거기서 자연스럽게 이어지는 말을 써야 함
+- 글에서 한 말을 다시 설명하거나 요약하지 말 것
+- 글에서 못 다한 감정, 뒷얘기, 추가로 하고 싶은 말을 툭 던지는 것
+- 또는 읽는 사람이 뭔가 반응하고 싶게 여지 남기기
+
+━━━ 절대 금지 ━━━
+- "매력적이야", "작품이야", "멋있어" 같은 칭찬 투 절대 금지
+- "저도요", "맞아요", "공감해요" 같은 제3자 반응 절대 금지
+- 글 내용이랑 전혀 상관없는 말 절대 금지
+- 마침표(.) 금지
 - 이모지 금지
-- 반말 필수
-- 1~3문장으로 짧게
-- 설명하거나 정리하려 하지 말 것 — 그냥 툭 이어가는 느낌
+- 존댓말 금지
+- 포장하거나 예쁘게 마무리하려는 시도 금지
+
+예시 (글: "요즘 스하리 하기가 좀 피곤함 / 스치니들 반하리 안하고 뒷삭만 해대니 짜증남 / 그래도 반하리는 꼭 가는 편임 / 그게 나의 원칙임"):
+좋은 댓글 예시: "근데 진짜 뒷삭하는 사람들 이해가 안 됨 / 그냥 안 하면 되잖아"
+나쁜 댓글 예시: "스하리, 정말 매력적인 작품이야. 너도 그 분위기 느껴봤어?" ← 이런 거 절대 금지
 
 댓글만 출력.`;
     var res = await fetch('/api/generate', {
