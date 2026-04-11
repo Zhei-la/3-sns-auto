@@ -100,14 +100,26 @@ body { background: var(--bg); color: var(--text); font-family: 'Noto Sans KR', s
 
 /* ── 라이트 모드 ── */
 body.light {
-  --bg: #f5f5f0; --bg2: #ffffff; --bg3: #efefeb; --sidebar: #e8e8e3;
-  --gold: #b8860b; --gold-dim: rgba(184,134,11,0.1); --gold-border: rgba(184,134,11,0.3);
-  --text: #1a1a1a; --text2: #555550; --text3: #999990;
-  --border: rgba(0,0,0,0.08); --border2: rgba(0,0,0,0.14);
+  --bg: #f0efe8; --bg2: #ffffff; --bg3: #e8e7e0; --sidebar: #dedad0;
+  --gold: #8a6200; --gold-dim: rgba(138,98,0,0.12); --gold-border: rgba(138,98,0,0.35);
+  --text: #0a0a0a; --text2: #333330; --text3: #666660;
+  --border: rgba(0,0,0,0.1); --border2: rgba(0,0,0,0.18);
 }
 body.light .sidebar { background: var(--sidebar); border-right: 1px solid var(--border); }
+body.light .sidebar-logo { color: #0a0a0a; }
+body.light .sidebar-logo em { color: var(--gold); }
+body.light .nav-item { color: #333330; }
+body.light .nav-item.active { color: var(--gold); }
 body.light .mobile-header { background: var(--sidebar); }
 body.light .mobile-top-btns { border-bottom: 1px solid var(--border); }
+body.light .mobile-tab { color: #555550; }
+body.light .mobile-tab.active { color: var(--gold); }
+body.light .home-title { color: #0a0a0a; }
+body.light .home-sub { color: #333330; }
+body.light .home-card { background: #ffffff; border-color: rgba(0,0,0,0.15); }
+body.light .home-card-name { color: #0a0a0a; }
+body.light .home-card-desc { color: #333330; }
+body.light .theme-btn { color: #333330; }
 
 /* ── 테마 토글 ── */
 .theme-toggle {
@@ -199,19 +211,19 @@ body.light .mobile-top-btns { border-bottom: 1px solid var(--border); }
               <div class="home-card-icon">📝</div>
               <div class="home-card-name">네이버 블로그</div>
               <div class="home-card-desc">네이버 블로그 원고를 AI가<br>자동으로 작성해드려요</div>
-              <div class="home-card-cta">→</div>
+              <div class="home-card-cta">바로가기 →</div>
             </div>
             <div class="home-card" onclick="switchPage('cafe')">
               <div class="home-card-icon">☕</div>
               <div class="home-card-name">네이버 카페</div>
               <div class="home-card-desc">네이버 카페 글을 AI가<br>자동으로 작성해드려요</div>
-              <div class="home-card-cta">→</div>
+              <div class="home-card-cta">바로가기 →</div>
             </div>
             <div class="home-card" onclick="switchPage('threads')">
               <div class="home-card-icon">🧵</div>
               <div class="home-card-name">스레드</div>
               <div class="home-card-desc">스레드 원고를<br>자동으로 작성해드려요</div>
-              <div class="home-card-cta">→</div>
+              <div class="home-card-cta">바로가기 →</div>
             </div>
           </div>
           <!-- 협업 및 문의 -->
@@ -234,9 +246,17 @@ body.light .mobile-top-btns { border-bottom: 1px solid var(--border); }
         <div class="loading" id="loading-cafe"><div class="spinner"></div><div style="color:var(--text2);font-size:13px">로딩 중...</div></div>
         <iframe id="iframe-cafe" src="about:blank" style="position:absolute;inset:0;opacity:0" onload="onLoad('cafe')"></iframe>
       </div>
-      <div class="page" id="page-threads">
-        <div class="loading" id="loading-threads"><div class="spinner"></div><div style="color:var(--text2);font-size:13px">스레드 로딩 중...</div></div>
-        <iframe id="iframe-threads" src="about:blank" style="position:absolute;inset:0;opacity:0;width:100%;height:100%;border:none" onload="onLoad('threads')"></iframe>
+      <div class="page" id="page-threads" style="overflow-y:auto">
+        <div class="loading" id="loading-threads" style="height:200px"><div class="spinner"></div><div style="color:var(--text2);font-size:13px">스레드 로딩 중...</div></div>
+        <iframe id="iframe-threads" src="about:blank" style="width:100%;height:calc(100vh - 200px);border:none;opacity:0;display:block" onload="onLoad('threads')"></iframe>
+        <div style="margin:20px;padding:24px;background:var(--bg3);border:1px solid var(--border2);border-radius:18px;text-align:center">
+          <div style="font-size:15px;font-weight:700;color:var(--text);margin-bottom:6px">협업 및 제휴 문의</div>
+          <div style="font-size:13px;color:var(--text2);margin-bottom:16px;line-height:1.7">광고 제휴, 기능 추가, 맞춤형 툴 제작 등<br>뭐든 편하게 말씀해주세요</div>
+          <div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap">
+            <a href="https://open.kakao.com/o/gehIVJpi" target="_blank" style="padding:9px 20px;background:var(--gold-dim);border:1px solid var(--gold-border);border-radius:8px;color:var(--gold);font-size:13px;font-weight:600;text-decoration:none">🎟 코드 받으러가기</a>
+            <a href="https://open.kakao.com/me/Zheila" target="_blank" style="padding:9px 20px;background:rgba(255,255,255,0.04);border:1px solid var(--border2);border-radius:8px;color:var(--text2);font-size:13px;font-weight:600;text-decoration:none">💬 문의하기</a>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -308,7 +328,11 @@ function onLoad(page) {
   if (loaded[page]) return
   loaded[page] = true
   document.getElementById('loading-' + page).style.display = 'none'
-  document.getElementById('iframe-' + page).style.opacity = '1'
+  const iframe = document.getElementById('iframe-' + page)
+  iframe.style.opacity = '1'
+  // 테마 전달
+  const theme = localStorage.getItem('hub_theme') || 'dark'
+  try { iframe.contentWindow.postMessage({type:'setTheme', theme}, '*') } catch(e) {}
 }
 
 function setTheme(mode) {
@@ -318,7 +342,19 @@ function setTheme(mode) {
   if (btnDark) btnDark.classList.toggle('active', mode === 'dark')
   if (btnLight) btnLight.classList.toggle('active', mode === 'light')
   localStorage.setItem('hub_theme', mode)
+  // iframe에 테마 전달
+  document.querySelectorAll('iframe').forEach(f => {
+    try { f.contentWindow.postMessage({type:'setTheme', theme: mode}, '*') } catch(e) {}
+  })
 }
+
+// iframe에서 테마 요청 수신
+window.addEventListener('message', function(e) {
+  if (e.data && e.data.type === 'getTheme') {
+    const t = localStorage.getItem('hub_theme') || 'dark'
+    e.source.postMessage({type:'setTheme', theme: t}, '*')
+  }
+})
 
 const savedTheme = localStorage.getItem('hub_theme') || 'dark'
 setTheme(savedTheme)
