@@ -255,7 +255,22 @@ body.light .t-lock-btn { background:#e8e7e0; color:#888; }
           <button class="btn btn-sm" onclick="savePostPrompt()" style="flex:1">💾 저장</button>
           <button class="btn btn-sm" onclick="clearPostPrompt()" style="color:var(--txt2)">초기화</button>
         </div>
-        <button class="btn btn-p" onclick="genPost()" id="genBtn">🪄 글 생성</button>
+        <label class="label" style="margin-top:12px">글 길이</label>
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:12px" id="postLengthChips">
+          <div class="chip" onclick="pickLength(this)" data-length="short" style="text-align:center;padding:10px 8px">
+            <div style="font-size:13px;font-weight:600">짧게</div>
+            <div style="font-size:11px;color:var(--txt2);margin-top:2px">3~4줄</div>
+          </div>
+          <div class="chip active" onclick="pickLength(this)" data-length="mid" style="text-align:center;padding:10px 8px">
+            <div style="font-size:13px;font-weight:600">중간</div>
+            <div style="font-size:11px;color:var(--txt2);margin-top:2px">5~8줄</div>
+          </div>
+          <div class="chip" onclick="pickLength(this)" data-length="long" style="text-align:center;padding:10px 8px">
+            <div style="font-size:13px;font-weight:600">길게</div>
+            <div style="font-size:11px;color:var(--txt2);margin-top:2px">8~12줄</div>
+          </div>
+        </div>
+        <button class="btn btn-p" onclick="genPost()" id="genBtn" style="width:100%">🪄 글 생성</button>
         <div style="margin-top:8px;padding:8px 10px;background:rgba(239,68,68,.08);border-radius:6px;font-size:11px;color:var(--txt2);line-height:1.7">
           ⚠️ 너무 빠른 생성 시 IP 차단될 수 있어요.
         </div>
@@ -1183,6 +1198,13 @@ function toggleFixedTone(el) {
   if (card) card.style.display = fixedTones.includes('쿠팡/홍보') ? 'block' : 'none';
 }
 
+var postLength = 'mid';
+function pickLength(el) {
+  document.querySelectorAll('#postLengthChips .chip').forEach(c => c.classList.remove('active'));
+  el.classList.add('active');
+  postLength = el.dataset.length;
+}
+
 function pickTone(el) {
   document.querySelectorAll('#toneChips .chip').forEach(function(c) { c.classList.remove('active'); });
   el.classList.add('active');
@@ -1212,7 +1234,29 @@ async function genPost() {
   try {
     var userPrompt = document.getElementById('userPostPrompt') ? document.getElementById('userPostPrompt').value.trim() : '';
     var toneStr = (fixedTones.length ? fixedTones.join(', ') + ', ' : '') + tone;
-    var prompt = '스레드(Threads) SNS 게시물을 작성해줘.\n주제: ' + topic + '\n말투/스타일: ' + toneStr + (userPrompt ? '\n추가 지침: ' + userPrompt : '') + '\n\n조건:\n- 짧고 임팩트 있게\n- 자연스러운 한국어\n- 이모지 1~2개\n- 해시태그 3~5개\n- 광고 아닌 친구 추천 느낌\n\n게시물만 출력하세요.';
+    var lengthMap = {
+      short: '3~4줄 (짧게) — 문장 기준, 20자 초과 문장은 2줄로',
+      mid:   '5~8줄 (중간) — 문장 기준, 20자 초과 문장은 2줄로',
+      long:  '8~12줄 (길게) — 문장 기준, 20자 초과 문장은 2줄로'
+    };
+    var lengthGuide = lengthMap[postLength] || lengthMap['mid'];
+    var prompt = `스레드(Threads) SNS 게시물을 작성해줘.
+
+주제: ${topic}
+말투/스타일: ${toneStr}${userPrompt ? '\n추가 지침: ' + userPrompt : ''}
+
+━━━ 형식 규칙 (절대 준수) ━━━
+- 글 길이: ${lengthGuide}
+- 줄바꿈 규칙: 문장 하나 끝날 때마다 줄바꿈
+- 20자 이하 짧은 문장: 1줄
+- 20자 초과 긴 문장: 2줄로 나눠서
+- 단락 구분: 2~4문장마다 빈 줄 한 칸
+- 이모지 절대 금지
+- 해시태그 절대 금지
+- 자연스럽고 친근한 한국어
+- 센스있고 위트있게, 읽다가 공감되고 피식 웃게
+
+글만 출력하세요. 해시태그, 이모지, 설명 없이.`;
     var res = await fetch('/api/generate', {
       method: 'POST',
       headers: {'Content-Type': 'application/json'},
