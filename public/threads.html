@@ -223,9 +223,12 @@ body.light .t-lock-btn { background:#e8e7e0; color:#888; }
         <div id="topicTags" style="display:none"></div>
         <label class="label">주제 입력</label>
         <div style="display:flex;gap:6px;margin-bottom:8px">
-          <input id="topic" placeholder="예: 닭강정, 강아지 간식, 공기청정기" style="flex:1" onkeydown="if(event.key==='Enter')saveTopicTag()" />
+          <input id="topic" placeholder="예: 닭강정, 강아지 간식, 스하리" style="flex:1" onkeydown="if(event.key==='Enter')saveTopicTag()" />
           <button class="btn btn-sm" onclick="saveTopicTag()">저장</button>
         </div>
+        <label class="label">내 얘기 <span style="color:var(--txt2);font-size:11px">(경험, 감정, 이전 글 흐름 — 뭐든 던져줘)</span></label>
+        <textarea id="myExperience" placeholder="예: 어제 뒷삭 당해서 열받는다고 썼는데 / 근데 오늘 또 스하리 하고 싶어짐 / 나도 모르겠음 그냥" style="min-height:64px;font-size:13px;margin-bottom:4px"></textarea>
+        <div style="font-size:11px;color:var(--txt2);margin-bottom:10px">이전 글 내용, 요즘 기분, 오늘 있었던 일 — 많이 쓸수록 내 얘기처럼 나와</div>
         <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px">
           <button class="btn btn-sm" onclick="setQuickTopic('스하리')" style="font-size:12px">🤝 스하리</button>
 
@@ -1245,6 +1248,7 @@ async function genPost() {
   btn.innerHTML = '<span class="spin" style="display:inline-block;width:13px;height:13px;border:2px solid rgba(255,255,255,0.3);border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite;vertical-align:middle;margin-right:6px"></span> 생성 중...';
   try {
     var userPrompt = document.getElementById('userPostPrompt') ? document.getElementById('userPostPrompt').value.trim() : '';
+    var myExp = document.getElementById('myExperience') ? document.getElementById('myExperience').value.trim() : '';
     var toneStr = (fixedTones.length ? fixedTones.join(', ') + ', ' : '') + tone;
     var lengthRules = {
       short: `【글 길이: 짧게】
@@ -1284,8 +1288,17 @@ async function genPost() {
 ` : '';
     var prompt = `스레드(Threads) SNS 게시물을 작성해줘.
 
-주제: ${topic}
+주제: ${topic}${myExp ? '\n내 경험/감정: ' + myExp : ''}
 말투/스타일: ${toneStr}${userPrompt ? '\n추가 지침: ' + userPrompt : ''}
+
+★ 글쓰기 핵심 규칙:
+${myExp ? `위에 적은 "내 얘기"가 글의 전부임
+- 저걸 중심으로, 내가 직접 겪고 느낀 것처럼 이어서 써줘
+- 이전에 비슷한 얘기를 한 적 있는 것처럼, 대화가 이어지는 느낌으로
+- 남 얘기, 일반론, 3인칭 절대 금지
+- 내가 지금 이 감정/상황에서 하고 싶은 말을 그냥 뱉는 것` : `주제에 대해 내가 직접 느끼고 겪은 것처럼 써줘
+- 정보 전달 금지. 감정이나 경험을 날 것으로 뱉을 것
+- 남 얘기하듯 쓰지 말고, 내 일상에서 나온 생각처럼`}
 
 ━━━ 줄 수 / 단락 구조 규칙 (가장 중요! 반드시 지킬 것) ━━━
 ${lenRule}
@@ -1375,7 +1388,24 @@ async function genComment() {
   try {
     var commentPrompt = document.getElementById('userCommentPrompt') ? document.getElementById('userCommentPrompt').value.trim() : '';
     var toneStr = (fixedTones.length ? fixedTones.join(', ') + ', ' : '') + tone;
-    var prompt = '스레드(Threads) 댓글을 작성해줘.\n주제: ' + topic + '\n말투: ' + toneStr + (commentPrompt ? '\n추가 지침: ' + commentPrompt : '') + '\n\n조건:\n- 1~2문장으로 짧게\n- 자연스럽고 공감가게\n- 이모지 0~1개\n\n댓글만 출력하세요.';
+    var postContent = document.getElementById('postText') ? document.getElementById('postText').value.trim() : '';
+    var prompt = `스레드 게시글 작성자가 자기 글에 직접 다는 댓글을 써줘.
+
+${postContent ? '내가 쓴 글:\n' + postContent + '\n' : '주제: ' + topic + '\n'}
+말투: ${toneStr}${commentPrompt ? '\n추가 지침: ' + commentPrompt : ''}
+
+━━━ 댓글 규칙 ━━━
+- 시점: 글쓴이 본인이 자기 글에 다는 댓글
+- "저도요", "맞아요", "공감해요", "그렇죠" 같은 제3자 반응 절대 금지
+- 내가 쓴 글에서 못 다한 말, 추가 감정, 뒷얘기를 이어가는 느낌
+- 또는 읽는 사람이 댓글 달고 싶게 여지 남기기
+- 마침표(.) 절대 금지
+- 이모지 금지
+- 반말 필수
+- 1~3문장으로 짧게
+- 설명하거나 정리하려 하지 말 것 — 그냥 툭 이어가는 느낌
+
+댓글만 출력.`;
     var res = await fetch('/api/generate', {
       method: 'POST',
       headers: {'Content-Type': 'application/json'},
