@@ -5,10 +5,19 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>ThreadsAuto</title>
 <style>
+@import url('https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;700&family=Noto+Sans+KR:wght@300;400;500;700&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Pretendard:wght@400;500;600;700&display=swap');
-:root{--bg:#0a0a0a;--sur:#141414;--sur2:#1e1e1e;--bdr:#2a2a2a;--txt:#f0f0f0;--txt2:#888;--green:#22c55e;--red:#ef4444;--blue:#3b82f6;--yellow:#f59e0b;}
+:root{
+  --bg:#0e0e0f;--sur:#161618;--sur2:#1e1e21;--bdr2:#252528;
+  --gold:#c9a96e;--gold2:#e8c98a;--gold-dim:rgba(201,169,110,0.12);--gold-border:rgba(201,169,110,0.25);
+  --text:#f0ede8;--text2:#9e9b95;--text3:#5a5855;
+  --border:rgba(255,255,255,0.07);--border2:rgba(255,255,255,0.12);
+  --green:#22c55e;--red:#ef4444;--blue:#3b82f6;--yellow:#c9a96e;
+  /* 기존 호환 */
+  --bdr:#252528;--txt:#f0ede8;--txt2:#9e9b95;
+}
 *{box-sizing:border-box;margin:0;padding:0;}
-body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg);color:var(--txt);min-height:100vh;}
+body{font-family:'Noto Sans KR',-apple-system,sans-serif;background:var(--bg);color:var(--txt);min-height:100vh;}
 .auth-wrap{display:flex;align-items:center;justify-content:center;min-height:100vh;padding:20px;}
 .auth-box{background:var(--sur);border:1px solid var(--bdr);border-radius:16px;padding:36px;width:100%;max-width:380px;}
 .auth-logo{font-size:22px;font-weight:700;margin-bottom:8px;}
@@ -21,15 +30,15 @@ body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg);colo
 .auth-err{font-size:13px;color:var(--red);margin-bottom:10px;min-height:18px;}
 .auth-hint{font-size:13px;color:var(--green);margin-bottom:10px;min-height:18px;}
 .app{display:none;min-height:100vh;}.app.on{display:flex;}
-.sidebar{width:220px;min-height:100vh;background:var(--sur);border-right:1px solid var(--bdr);display:flex;flex-direction:column;padding:24px 0;position:fixed;top:0;left:0;bottom:0;overflow-y:auto;z-index:50;}
+.sidebar{display:none!important;}
 .logo{padding:0 20px 20px;font-size:18px;font-weight:700;border-bottom:1px solid var(--bdr);margin-bottom:12px;}
 .nav-item{padding:10px 20px;cursor:pointer;font-size:14px;color:var(--txt2);transition:all .15s;display:flex;align-items:center;gap:10px;}
 .nav-item:hover{color:var(--txt);background:var(--sur2);}
 .nav-item.active{color:var(--txt);background:var(--sur2);border-right:2px solid var(--txt);}
 .nav-sep{border-top:1px solid var(--bdr);margin:8px 0;}
 .sidebar-foot{margin-top:auto;padding:16px 20px;border-top:1px solid var(--bdr);}
-.main{margin-left:220px;flex:1;padding:32px;display:flex;flex-direction:column;align-items:center;}
-.page{display:none;}.page.active{display:block;width:100%;max-width:720px;}
+.main{margin-left:0;flex:1;padding:24px 1.5rem;display:flex;flex-direction:column;align-items:center;}
+.page{display:none;}.page.active{display:block;width:100%;max-width:860px;}
 h1{font-size:22px;font-weight:700;margin-bottom:24px;}
 h2{font-size:11px;font-weight:600;margin-bottom:10px;color:var(--txt2);text-transform:uppercase;letter-spacing:.5px;}
 .card{background:var(--sur);border:1px solid var(--bdr);border-radius:12px;padding:20px;margin-bottom:16px;}
@@ -78,7 +87,7 @@ textarea{resize:vertical;min-height:120px;line-height:1.6;}
 .modal h3{font-size:16px;font-weight:600;margin-bottom:16px;}
 .ham{display:none;position:fixed;top:12px;left:12px;z-index:200;background:var(--sur);border:1px solid var(--bdr);border-radius:8px;padding:8px 10px;cursor:pointer;font-size:18px;}
 .overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:49;}
-@media(max-width:768px){.ham{display:block;}.sidebar{transform:translateX(-100%);transition:transform .25s;z-index:150;}.sidebar.open{transform:translateX(0);}.overlay.open{display:block;}.main{margin-left:0;padding:16px;padding-top:56px;}}
+@media(max-width:768px){.ham{display:none;}.main{margin-left:0;padding:16px;}}
 </style>
 </head>
 <body>
@@ -159,8 +168,8 @@ textarea{resize:vertical;min-height:120px;line-height:1.6;}
 
   <main class="main">
     <!-- 쿠팡 위젯 -->
-    <div style="width:100%;max-width:860px;overflow:hidden;margin-bottom:16px;pointer-events:none">
-      <iframe style="pointer-events:auto" src="https://ads-partners.coupang.com/widgets.html?id=979545&template=carousel&trackingCode=AF5722914&subId=&width=728&height=120&tsource=" width="100%" height="120" frameborder="0" scrolling="no" referrerpolicy="unsafe-url" browsingtopics></iframe>
+    <div style="width:100%;max-width:860px;overflow:hidden;margin-bottom:16px;pointer-events:none;margin-left:auto;margin-right:auto">
+      <iframe style="pointer-events:auto;max-width:860px;margin:0 auto;display:block" src="https://ads-partners.coupang.com/widgets.html?id=979545&template=carousel&trackingCode=AF5722914&subId=&width=728&height=120&tsource=" width="100%" height="120" frameborder="0" scrolling="no" referrerpolicy="unsafe-url" browsingtopics></iframe>
     </div>
     <div class="page active" id="page-write">
       <h1>✏️ 글 작성</h1>
@@ -230,8 +239,8 @@ textarea{resize:vertical;min-height:120px;line-height:1.6;}
         </div>
       </div>
       <!-- 쿠팡 위젯 -->
-      <div style="width:100%;overflow:hidden;margin-bottom:16px;pointer-events:none">
-        <iframe style="pointer-events:auto" src="https://ads-partners.coupang.com/widgets.html?id=979546&template=carousel&trackingCode=AF5722914&subId=&width=728&height=120&tsource=" width="100%" height="120" frameborder="0" scrolling="no" referrerpolicy="unsafe-url" browsingtopics></iframe>
+      <div style="width:100%;max-width:860px;overflow:hidden;margin-bottom:16px;pointer-events:none;margin-left:auto;margin-right:auto">
+        <iframe style="pointer-events:auto;max-width:860px;margin:0 auto;display:block" src="https://ads-partners.coupang.com/widgets.html?id=979546&template=carousel&trackingCode=AF5722914&subId=&width=728&height=120&tsource=" width="100%" height="120" frameborder="0" scrolling="no" referrerpolicy="unsafe-url" browsingtopics></iframe>
       </div>
       <div class="card">
         <h2>댓글</h2>
@@ -578,7 +587,90 @@ textarea{resize:vertical;min-height:120px;line-height:1.6;}
         <div id="userList"></div>
       </div>
     </div>
-  </main>
+  
+  <!-- 자동화 배너 + 협업 섹션 -->
+  <style>
+  .t-promo-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px;max-width:860px;width:100%}
+  .t-promo-banner{
+    display:flex;flex-direction:column;align-items:center;
+    background:#161618;border:1px solid rgba(255,255,255,0.07);
+    border-radius:14px;padding:1.5rem;text-align:center;
+    text-decoration:none;transition:border-color .2s;
+  }
+  .t-promo-banner:hover{border-color:rgba(255,255,255,0.12)}
+  .t-promo-banner h3{font-family:'Noto Serif KR',serif;font-size:16px;margin-bottom:5px;color:#c9a96e;font-weight:700}
+  .t-promo-banner p{font-size:13px;color:#9e9b95;margin-bottom:14px;line-height:1.7}
+  .t-collab-section{
+    margin-top:12px;max-width:860px;width:100%;
+    background:#161618;border:1px solid rgba(255,255,255,0.07);
+    border-radius:14px;padding:1.5rem;text-align:center;
+  }
+  .t-collab-section h3{font-family:'Noto Serif KR',serif;font-size:16px;margin-bottom:5px;color:#c9a96e;font-weight:700}
+  .t-collab-section p{font-size:13px;color:#9e9b95;margin-bottom:14px;line-height:1.7}
+  .t-collab-chips{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;margin-bottom:14px}
+  .t-collab-chip{
+    padding:4px 10px;border-radius:99px;border:1px solid rgba(255,255,255,0.12);
+    font-size:11px;background:#1e1e21;color:#9e9b95;white-space:nowrap;
+  }
+  .t-collab-btn{
+    display:inline-flex;align-items:center;gap:7px;
+    background:#c9a96e;color:#0e0e0f;padding:10px 24px;border-radius:8px;
+    font-size:13px;font-weight:700;cursor:pointer;text-decoration:none;
+    font-family:'Noto Sans KR',sans-serif;transition:all .2s;
+  }
+  .t-collab-btn:hover{background:#e8c98a}
+  .t-lock-btn{
+    display:inline-flex;align-items:center;justify-content:center;margin:0 auto;
+    background:#2e2e2e;color:#888;padding:10px 24px;border-radius:8px;
+    font-size:13px;font-weight:700;cursor:not-allowed;
+    font-family:'Noto Sans KR',sans-serif;
+  }
+  @media(max-width:560px){.t-promo-grid{grid-template-columns:1fr!important}}
+  </style>
+
+  <div class="t-promo-grid">
+    <a href="https://zhei-la.github.io/Blog-Auto-promotion/" target="_blank" rel="noopener" class="t-promo-banner">
+      <h3>블로그 자동화 · 대행</h3>
+      <p>블로그 관리가 부담스럽다면<br>저한테 맡겨봐요 👋</p>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:14px;width:100%">
+        <div class="t-collab-chip" style="text-align:center">가게·매장 운영자</div>
+        <div class="t-collab-chip" style="text-align:center">사업자·자영업자</div>
+        <div class="t-collab-chip" style="text-align:center">글 쓸 시간 없는 분</div>
+        <div class="t-collab-chip" style="text-align:center">병원·클리닉·학원</div>
+        <div class="t-collab-chip" style="text-align:center">금융·부동산 종사자</div>
+        <div class="t-collab-chip" style="text-align:center">보험·재무 컨설팅</div>
+      </div>
+      <div class="t-collab-btn">자세히 보기 →</div>
+    </a>
+    <div class="t-promo-banner" style="cursor:not-allowed;opacity:0.5">
+      <h3>스레드 자동화</h3>
+      <p>매일 올리기 너무 귀찮죠?<br>AI가 대신 올려드릴게요 🤖</p>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:14px;width:100%">
+        <div class="t-collab-chip" style="text-align:center">스레드 계정 운영자</div>
+        <div class="t-collab-chip" style="text-align:center">브랜드·매장 홍보</div>
+        <div class="t-collab-chip" style="text-align:center">SNS 자동화 원하는 분</div>
+        <div class="t-collab-chip" style="text-align:center">쿠팡파트너스</div>
+        <div class="t-collab-chip" style="text-align:center">글 소재 고민하시는 분</div>
+        <div class="t-collab-chip" style="text-align:center">매일 올리기 힘든 분</div>
+      </div>
+      <div class="t-lock-btn">🔒 준비 중</div>
+    </div>
+  </div>
+
+  <div class="t-collab-section">
+    <h3>협업 및 제휴 문의</h3>
+    <p>광고 제휴, 기능 추가, 맞춤형 툴 제작 등<br>뭐든 편하게 말씀해주세요 😊</p>
+    <div class="t-collab-chips">
+      <div class="t-collab-chip">📢 광고 제휴</div>
+      <div class="t-collab-chip">🔧 기능 커스텀</div>
+      <div class="t-collab-chip">🤝 마케팅 협업</div>
+    </div>
+    <a class="t-collab-btn" href="https://open.kakao.com/me/Zheila" target="_blank" rel="noopener">
+      💬 카카오톡으로 문의하기
+    </a>
+  </div>
+  <div style="height:20px"></div>
+</main>
 </div>
 
 <!-- 모달들 -->
@@ -2512,6 +2604,31 @@ async function loadAdBanner() {
 
 init();
 </script>
+
+<script>
+// 부모 허브에서 테마 수신
+window.addEventListener('message', function(e) {
+  if (e.data && e.data.type === 'setTheme') {
+    document.documentElement.setAttribute('data-theme', e.data.theme);
+    if (e.data.theme === 'light') {
+      document.documentElement.style.setProperty('--bg', '#f0efe8');
+      document.documentElement.style.setProperty('--sur', '#ffffff');
+      document.documentElement.style.setProperty('--sur2', '#e8e7e0');
+      document.documentElement.style.setProperty('--bdr', '#d0cfc8');
+      document.documentElement.style.setProperty('--txt', '#0a0a0a');
+      document.documentElement.style.setProperty('--txt2', '#333330');
+    } else {
+      document.documentElement.style.setProperty('--bg', '#0a0a0a');
+      document.documentElement.style.setProperty('--sur', '#141414');
+      document.documentElement.style.setProperty('--sur2', '#1e1e1e');
+      document.documentElement.style.setProperty('--bdr', '#2a2a2a');
+      document.documentElement.style.setProperty('--txt', '#f0f0f0');
+      document.documentElement.style.setProperty('--txt2', '#888');
+    }
+  }
+});
+// 현재 테마 요청
+window.parent.postMessage({type: 'getTheme'}, '*');
+</script>
 </body>
 </html>
-
