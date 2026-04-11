@@ -258,17 +258,6 @@ async function doLogin() {
   }
 }
 
-async function setTheme(mode) {
-  document.body.classList.toggle('light', mode === 'light')
-  document.getElementById('btn-dark').classList.toggle('active', mode === 'dark')
-  document.getElementById('btn-light').classList.toggle('active', mode === 'light')
-  localStorage.setItem('hub_theme', mode)
-}
-
-// 저장된 테마 적용
-const savedTheme = localStorage.getItem('hub_theme') || 'dark'
-setTheme(savedTheme)
-
 async function checkSavedCode() {
   const saved = localStorage.getItem('hub_code')
   const savedVer = localStorage.getItem('hub_version')
@@ -315,15 +304,15 @@ function onLoad(page) {
 
 function setTheme(mode) {
   document.body.classList.toggle('light', mode === 'light')
-  document.getElementById('btn-dark').classList.toggle('active', mode === 'dark')
-  document.getElementById('btn-light').classList.toggle('active', mode === 'light')
+  const btnDark = document.getElementById('btn-dark')
+  const btnLight = document.getElementById('btn-light')
+  if (btnDark) btnDark.classList.toggle('active', mode === 'dark')
+  if (btnLight) btnLight.classList.toggle('active', mode === 'light')
   localStorage.setItem('hub_theme', mode)
 }
 
-// 저장된 테마 적용
 const savedTheme = localStorage.getItem('hub_theme') || 'dark'
 setTheme(savedTheme)
-
 checkSavedCode()
 </script>
 </body>
