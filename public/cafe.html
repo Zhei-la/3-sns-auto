@@ -248,11 +248,12 @@ body.light .spin { border-color:rgba(0,0,0,0.15); border-top-color:#8a6200; }
       <div class="scard-title">주제 & 키워드</div>
     </div>
     <div class="field">
-      <textarea id="keywords" placeholder="글의 주제나 핵심 키워드를 입력하세요&#10;예) 강아지 슬개골 수술 후기, 비용 50만원, 회복기간 2주"></textarea>
+      <div style="font-size:11px;color:var(--text3);margin-bottom:6px;line-height:1.7">💡 <b style="color:var(--text2)">/</b> 로 구분하면 여러 키워드 분리 — 각 키워드는 글에 그대로 포함<br>예) <code style="background:var(--bg3);padding:1px 5px;border-radius:4px">강아지슬개골수술/강아지수술비용/강아지수술후기</code></div>
+      <textarea id="keywords" placeholder="예) 강아지슬개골수술후기/강아지수술비용 (/ 로 구분하면 각각 키워드로 처리)"></textarea>
     </div>
     <div class="field">
       <label>추가 정보 <span style="color:var(--text3);font-weight:400">(꼭 넣고 싶은 내용, 경험, 가격 등 — 선택사항)</span></label>
-      <textarea id="extra" placeholder="예) 수술 전날 금식 필수, 병원 이름은 안 밝힘, 회복기간에 계단 금지라고 했음, 비용은 보험 적용 전 50만원"></textarea>
+      <textarea id="extra" placeholder="예) 수술 전날 금식 필수 / 비용 보험 적용 전 50만원 / 회복기간 계단 금지 (쉼표 대신 / 로 구분)"></textarea>
     </div>
   </div>
 
@@ -571,18 +572,39 @@ function buildPrompt(){
 
   const activeOpts=OPTIONS.filter(o=>selOpts.has(o.id)&&o.id!=='autoTitle').map(o=>optMap[o.id]);
 
+  // 키워드 / 구분 처리
+  const kwList = kw ? kw.split('/').map(k=>k.trim()).filter(Boolean) : [];
+  const kwFormatted = kwList.length > 1 ? kwList.join(', ') : (kw||'자유 주제');
+
   return `너는 네이버 카페 이탈률 0%를 목표로 하는 콘텐츠 전문가야.
 
 ━━━ 절대 규칙 ━━━
 - 뻔한 시작 절대 금지 ("안녕하세요", "오늘은 ~에 대해", "요즘 많이들" 등 클리셰 금지)
 - AI 티 절대 금지
-- 마침표 남발 금지
+- 마침표(.) 남발 절대 금지 — 문장 끝 마침표 최대한 줄이기
 - 광고·법률위반·플랫폼 제재 표현 절대 금지
 - 아래 금지어 절대 사용 금지:
   최저가 특가 할인 무료증정 구매링크 협찬 광고 파트너스
   완치 100%치료 기적 부작용없음 즉시효과
   월1000만원 자동수익 확정수익 급등주 코인대박
   불법 도박 성매매 마약 위조 해킹 토렌트
+
+━━━ 키워드 처리 규칙 (절대 준수) ━━━
+키워드 목록: ${kwFormatted}
+- "/" 로 구분된 각 키워드는 글자 하나도 바꾸지 말고 그대로 글에 포함
+- 예) "강아지슬개골수술" → "강아지 슬개골 수술" 이렇게 띄어쓰거나 분리 절대 금지
+- 각 키워드를 문단에 자연스럽게 그대로 녹여서 사용
+- 제목에도 키워드 원문 반드시 포함
+
+━━━ SEO 규칙 ━━━
+- 키워드 기반 롱테일 파생 키워드 발굴해서 [KEYWORDS]에 포함
+- 실제 네이버에서 검색할 법한 형태로 10개 이상
+
+━━━ 재미·위트 규칙 ━━━
+- 뻔한 표현 절대 금지: "정말 좋았어요", "강추해요", "후회없어요" 같은 클리셰 금지
+- 읽다가 피식 웃게 만드는 표현, 공감되는 디테일 자연스럽게 섞기
+- 독자한테 말 거는 느낌 넣기: "혹시 저만 이런 거예요?", "이거 알고 계셨나요?"
+- 다음 문장이 궁금해서 계속 읽게 만들기
 
 ━━━ 제목 5개 규칙 ━━━
 - 초초초강력 후킹 — 안 누르면 손해볼 것 같은 느낌
@@ -595,11 +617,10 @@ function buildPrompt(){
 - 가독성 구조: 3~4문장 → 빈 줄 → 3~4문장 → 빈 줄 반복
 - 문장 끝날 때마다 줄바꿈
 - 중간중간 궁금증·공감 요소 삽입
-- 위트·유머 자연스럽게
 
 카테고리: ${cats.length?cats.join(', '):'일반'}
-주제/키워드: ${kw||'자유 주제'}
-꼭 포함할 내용: ${extra||'없음'}
+주제/키워드: ${kwFormatted}
+꼭 포함할 내용: ${document.getElementById('extra').value.trim()||'없음'}
 글 톤: ${tone?.label||'친근하게'}
 분량: 약 ${LEN_TOKENS[lenIdx]}자 내외
 
