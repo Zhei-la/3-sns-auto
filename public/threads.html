@@ -82,7 +82,7 @@ textarea{resize:vertical;min-height:120px;line-height:1.6;}
 @keyframes tup{from{transform:translateY(20px);opacity:0}to{transform:translateY(0);opacity:1}}
 .spin{display:inline-block;width:14px;height:14px;border:2px solid #333;border-top-color:#888;border-radius:50%;animation:rot .7s linear infinite;vertical-align:middle;}
 @keyframes rot{to{transform:rotate(360deg)}}
-.modal-bg{position:fixed;inset:0;background:rgba(0,0,0,.7);display:none;align-items:center;justify-content:center;z-index:100;padding:16px;}
+.modal-bg{position:fixed;inset:0;background:rgba(0,0,0,.7);display:none;align-items:center;justify-content:center;z-index:9999;padding:16px;}
 .modal-bg.open{display:flex;}
 .modal{background:var(--sur);border:1px solid var(--bdr);border-radius:14px;padding:24px;width:460px;max-width:100%;}
 .modal h3{font-size:16px;font-weight:600;margin-bottom:16px;}
@@ -120,61 +120,6 @@ body.light .t-collab-chip { background:#e8e7e0; border-color:#c0bfb8; color:#444
 body.light .t-collab-btn { background:#8a6200; color:#fff; }
 body.light .t-collab-btn:hover { background:#a07800; }
 body.light .t-lock-btn { background:#e8e7e0; color:#888; }
-
-body.light { font-family: 'Noto Sans KR', sans-serif; }
-body.light .auth-wrap { background:#f0efe8; }
-body.light .auth-box { background:#ffffff; border-color:#d0cfc8; }
-/* 입력/선택 요소 전체 */
-body.light input, body.light textarea, body.light select {
-  background:#f5f4ee; border-color:#c0bfb8; color:#0a0a0a;
-}
-body.light input:focus, body.light textarea:focus, body.light select:focus {
-  border-color:#8a6200;
-}
-body.light input::placeholder, body.light textarea::placeholder { color:#999990; }
-/* 버튼 전체 */
-body.light .btn { background:#e8e7e0; border-color:#c0bfb8; color:#0a0a0a; }
-body.light .btn:hover { background:#dedad6; border-color:#aaa; }
-body.light .btn-sm { background:#e8e7e0; border-color:#c0bfb8; color:#0a0a0a; }
-body.light .btn-p { background:#8a6200 !important; border-color:#8a6200 !important; color:#fff !important; }
-body.light .btn-r { background:#e8e7e0; border-color:#c0bfb8; color:#c0392b; }
-/* 칩 */
-body.light .chip { background:#e8e7e0; border-color:#c0bfb8; color:#333330; }
-body.light .chip.active, body.light .chip[style*="background:var(--sur2)"] { background:rgba(138,98,0,0.12); border-color:rgba(138,98,0,0.3); color:#8a6200; }
-/* 카드 */
-body.light .card { background:#ffffff; border-color:#d0cfc8; }
-body.light .card h2 { color:#0a0a0a; }
-body.light .label { color:#555550; }
-/* 리스트 */
-body.light .list-item { background:#f5f4ee; border-color:#d0cfc8; color:#0a0a0a; }
-/* 배지 */
-body.light .badge { background:#e8e7e0; color:#444440; border-color:#c0bfb8; }
-body.light .badge.by { background:rgba(138,98,0,0.1); color:#8a6200; }
-body.light .badge.bp { background:rgba(34,100,34,0.1); color:#2d7a2d; }
-/* 저장/초기화 버튼 */
-body.light [onclick="saveCommentPrompt()"],
-body.light [onclick="clearCommentPrompt()"] {
-  background:#e8e7e0; border-color:#c0bfb8; color:#0a0a0a;
-}
-/* 노란색 버튼 (요금제) */
-body.light .btn[style*="yellow"], body.light [style*="color:var(--yellow)"] { color:#8a6200 !important; border-color:#8a6200 !important; }
-/* 경고 박스 */
-body.light [style*="rgba(239,68,68"] { background:rgba(180,40,40,0.07); color:#c0392b; }
-body.light [style*="rgba(59,130,246"] { background:rgba(30,80,160,0.07); color:#1a5fa0; }
-/* 모달 */
-body.light .modal { background:#ffffff; border-color:#d0cfc8; }
-body.light .modal h3 { color:#0a0a0a; }
-body.light .modal-bg { background:rgba(0,0,0,0.35); }
-/* 토스트 */
-body.light .toast { background:#ffffff; border-color:#d0cfc8; color:#0a0a0a; }
-/* 구분선 */
-body.light .nav-sep { border-color:#d0cfc8; }
-/* 글 생성 관련 */
-body.light [id="postText"], body.light [id="commentText"] {
-  background:#f5f4ee; border-color:#c0bfb8; color:#0a0a0a;
-}
-/* 전체 */
-body.light { background:#f0efe8; color:#0a0a0a; }
 
 </style>
 </head>
@@ -315,6 +260,10 @@ body.light { background:#f0efe8; color:#0a0a0a; }
           ⚠️ 너무 빠른 생성 시 IP 차단될 수 있어요.
         </div>
       </div>
+      <!-- 쿠팡 위젯 (글생성 아래) -->
+      <div style="width:100%;max-width:860px;overflow:hidden;margin-bottom:16px;pointer-events:none;margin-left:auto;margin-right:auto">
+        <iframe style="pointer-events:auto;max-width:860px;margin:0 auto;display:block" src="https://ads-partners.coupang.com/widgets.html?id=979545&template=carousel&trackingCode=AF5722914&subId=&width=728&height=120&tsource=" width="100%" height="120" frameborder="0" scrolling="no" referrerpolicy="unsafe-url" browsingtopics></iframe>
+      </div>
       <div class="card">
         <h2>생성된 글</h2>
         <textarea id="postText" placeholder="글이 여기 생성됩니다..."></textarea>
@@ -325,10 +274,6 @@ body.light { background:#f0efe8; color:#0a0a0a; }
         <div style="margin-top:10px;padding:8px 10px;background:rgba(239,68,68,.08);border-radius:6px;font-size:11px;color:var(--txt2);line-height:1.7">
           ⚠️ 너무 빠른 생성 시 IP 차단될 수 있어요.
         </div>
-      </div>
-      <!-- 쿠팡 위젯 -->
-      <div style="width:100%;max-width:860px;overflow:hidden;margin-bottom:16px;pointer-events:none;margin-left:auto;margin-right:auto">
-        <iframe style="pointer-events:auto;max-width:860px;margin:0 auto;display:block" src="https://ads-partners.coupang.com/widgets.html?id=979546&template=carousel&trackingCode=AF5722914&subId=&width=728&height=120&tsource=" width="100%" height="120" frameborder="0" scrolling="no" referrerpolicy="unsafe-url" browsingtopics></iframe>
       </div>
       <div class="card">
         <h2>댓글</h2>
@@ -349,9 +294,13 @@ body.light { background:#f0efe8; color:#0a0a0a; }
         </div>
       </div>
 
-      <!-- 요금제 안내 카드 (무료 유저만 표시) -->
-      <div class="card" id="freePlanBannerCard" style="display:none;border-color:rgba(245,158,11,.4)">
+      <!-- 요금제 안내 카드 -->
+      <div class="card" id="freePlanBannerCard" style="display:none;border-color:rgba(201,169,110,.4)">
         <button class="btn" style="width:100%;justify-content:center;border-color:var(--yellow);color:var(--yellow)" onclick="openPlanModal()">💎 요금제 자세히 보기</button>
+      </div>
+      <!-- 쿠팡 위젯 (요금제 아래) -->
+      <div style="width:100%;max-width:860px;overflow:hidden;margin-bottom:16px;pointer-events:none;margin-left:auto;margin-right:auto">
+        <iframe style="pointer-events:auto;max-width:860px;margin:0 auto;display:block" src="https://ads-partners.coupang.com/widgets.html?id=979546&template=carousel&trackingCode=AF5722914&subId=&width=728&height=120&tsource=" width="100%" height="120" frameborder="0" scrolling="no" referrerpolicy="unsafe-url" browsingtopics></iframe>
       </div>
       <div class="card" id="coupangLinkCard" style="display:none">
         <h2>🛒 쿠팡/홍보 설정</h2>
