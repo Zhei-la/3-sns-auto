@@ -43,6 +43,9 @@ body{background:var(--bg);color:var(--text);font-family:'Noto Sans KR',sans-seri
 .mobile-tab{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;padding:10px 4px;font-size:11px;color:var(--text2);border-bottom:2px solid transparent;cursor:pointer;transition:all .15s;white-space:nowrap;}
 .mobile-tab .ico{font-size:18px;}
 .mobile-tab.active{color:var(--gold);border-bottom-color:var(--gold);}
+.mobile-theme-toggle{flex:none;padding:10px 12px;border-left:1px solid var(--border);font-size:18px;}
+.mobile-theme-toggle:hover{background:rgba(255,255,255,0.05);}
+body.light .mobile-theme-toggle{border-left-color:rgba(0,0,0,0.1);}
 
 /* ── PC 레이아웃 ── */
 .layout{flex:1;display:flex;overflow:hidden;}
@@ -172,14 +175,12 @@ body.light .spinner{border-color:rgba(0,0,0,0.1);border-top-color:var(--gold);}
 <div id="app">
   <!-- 모바일 상단 -->
   <div class="mobile-header">
-    <div class="mobile-top-btns">
-      <a href="https://open.kakao.com/me/Zheila" target="_blank" class="side-btn contact-btn" style="flex:1;text-align:center">💬 문의하기</a>
-    </div>
     <div class="mobile-tabs">
       <div class="mobile-tab active" onclick="switchPage('home')"><span class="ico">🏠</span>홈</div>
       <div class="mobile-tab" onclick="switchPage('blog')"><span class="ico">📝</span>블로그</div>
       <div class="mobile-tab" onclick="switchPage('cafe')"><span class="ico">☕</span>카페</div>
       <div class="mobile-tab" onclick="switchPage('threads')"><span class="ico">🧵</span>스레드</div>
+      <div class="mobile-tab mobile-theme-toggle" onclick="toggleTheme()" id="mobile-theme-btn"><span class="ico">🌙</span></div>
     </div>
   </div>
 
@@ -237,7 +238,6 @@ body.light .spinner{border-color:rgba(0,0,0,0.1);border-top-color:var(--gold);}
             <div class="home-collab-title">협업 및 제휴 문의</div>
             <div class="home-collab-desc">광고 제휴, 기능 추가, 맞춤형 툴 제작 등<br>뭐든 편하게 말씀해주세요</div>
             <div class="home-collab-btns">
-              <a href="https://open.kakao.com/o/gehIVJpi" target="_blank" class="side-btn code-btn">🎟 코드 받으러가기</a>
               <a href="https://open.kakao.com/me/Zheila" target="_blank" class="side-btn contact-btn">💬 문의하기</a>
             </div>
           </div>
@@ -337,6 +337,14 @@ function onLoad(page) {
   try { iframe.contentWindow.postMessage({type:'setTheme', theme}, '*') } catch(e) {}
 }
 
+function toggleTheme() {
+  const current = localStorage.getItem('hub_theme') || 'dark'
+  const next = current === 'dark' ? 'light' : 'dark'
+  setTheme(next)
+  const btn = document.getElementById('mobile-theme-btn')
+  if (btn) btn.querySelector('.ico').textContent = next === 'dark' ? '🌙' : '☀️'
+}
+
 function setTheme(mode) {
   document.body.classList.toggle('light', mode === 'light')
   const btnDark = document.getElementById('btn-dark')
@@ -358,6 +366,8 @@ window.addEventListener('message', function(e) {
 
 const savedTheme = localStorage.getItem('hub_theme') || 'dark'
 setTheme(savedTheme)
+const mobileBtn = document.getElementById('mobile-theme-btn')
+if (mobileBtn) mobileBtn.querySelector('.ico').textContent = savedTheme === 'dark' ? '🌙' : '☀️'
 checkSavedCode()
 </script>
 </body>
