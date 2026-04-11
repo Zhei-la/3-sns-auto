@@ -123,7 +123,7 @@ body.light .t-lock-btn { background:#e8e7e0; color:#888; }
 
 </style>
 </head>
-<body>
+<body class="light">
 <!-- auth inputs (hidden, JS 참조용) -->
 <div style="display:none">
   <input id="freeCode" /><input id="freeNick" /><input id="freePw" />
@@ -224,7 +224,7 @@ body.light .t-lock-btn { background:#e8e7e0; color:#888; }
         <label class="label">주제 입력</label>
         <div style="display:flex;gap:6px;margin-bottom:8px">
           <input id="topic" placeholder="예: 닭강정, 강아지 간식, 공기청정기" style="flex:1" onkeydown="if(event.key==='Enter')saveTopicTag()" />
-          <button class="btn btn-sm btn-p" onclick="saveTopicTag()">저장</button>
+          <button class="btn btn-sm" onclick="saveTopicTag()">저장</button>
         </div>
         <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px">
           <button class="btn btn-sm" onclick="setQuickTopic('스하리')" style="font-size:12px">🤝 스하리</button>
@@ -249,7 +249,7 @@ body.light .t-lock-btn { background:#e8e7e0; color:#888; }
           </div>
           <div style="display:flex;gap:6px;margin-top:8px">
             <input id="customToneInput" placeholder="말투 직접 추가" style="flex:1;font-size:13px" onkeydown="if(event.key==='Enter')addCustomTone()" />
-            <button class="btn btn-sm btn-p" onclick="addCustomTone()">+추가</button>
+            <button class="btn btn-sm" onclick="addCustomTone()">+추가</button>
           </div>
           <div style="font-size:11px;color:var(--txt2);margin-top:4px">아래 말투 길게 누르면 삭제 가능</div>
         </div>
@@ -274,7 +274,7 @@ body.light .t-lock-btn { background:#e8e7e0; color:#888; }
             <div style="font-size:11px;color:var(--txt2);margin-top:2px">8~12줄</div>
           </div>
         </div>
-        <button class="btn btn-p" onclick="genPost()" id="genBtn" style="width:100%">🪄 글 생성</button>
+        <button class="btn" onclick="genPost()" id="genBtn" style="width:100%">🪄 글 생성</button>
         <div style="margin-top:8px;padding:8px 10px;background:rgba(239,68,68,.08);border-radius:6px;font-size:11px;color:var(--txt2);line-height:1.7">
           ⚠️ 너무 빠른 생성 시 IP 차단될 수 있어요.
         </div>
@@ -783,7 +783,7 @@ body.light .t-lock-btn { background:#e8e7e0; color:#888; }
     <div style="background:var(--sur2);border:1px solid var(--bdr);border-radius:10px;padding:16px;margin-bottom:16px">
       <div style="font-size:13px;font-weight:600;margin-bottom:12px">📋 업그레이드 문의<br><span style="font-size:11px;font-weight:400;color:var(--txt2)">(아래 내용 복사 후 카카오톡으로 전송)</span></div>
       <div id="planInquiryText" style="font-size:13px;color:var(--txt2);line-height:2;background:var(--bg);border:1px solid var(--bdr);border-radius:8px;padding:12px;font-family:monospace">로딩 중...</div>
-      <button class="btn btn-sm btn-p" style="margin-top:10px;width:100%;justify-content:center" onclick="copyPlanInquiry()">📋 문의 내용 복사하기</button>
+      <button class="btn btn-sm" style="margin-top:10px;width:100%;justify-content:center" onclick="copyPlanInquiry()">📋 문의 내용 복사하기</button>
     </div>
     <a href="https://open.kakao.com/o/sdwT0Zoi" target="_blank" style="display:flex;align-items:center;justify-content:center;gap:8px;padding:14px;background:var(--sur2);color:var(--txt);border:1px solid var(--bdr);border-radius:10px;font-weight:600;font-size:14px;text-decoration:none;margin-bottom:12px">카카오로 문의하기</a>
     <div style="text-align:center;font-size:12px;color:var(--txt2);margin-bottom:12px;line-height:1.7">더 많은 기능을 사용하고 싶다면 문의주세요 😊<br>맞춤 기능 추가도 상담 가능해요!</div>
