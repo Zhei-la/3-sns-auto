@@ -98,6 +98,31 @@ body { background: var(--bg); color: var(--text); font-family: 'Noto Sans KR', s
 .spinner { width: 32px; height: 32px; border: 3px solid var(--border2); border-top-color: var(--gold); border-radius: 50%; animation: spin .7s linear infinite; }
 @keyframes spin { to { transform: rotate(360deg); } }
 
+/* ── 라이트 모드 ── */
+body.light {
+  --bg: #f5f5f0; --bg2: #ffffff; --bg3: #efefeb; --sidebar: #e8e8e3;
+  --gold: #b8860b; --gold-dim: rgba(184,134,11,0.1); --gold-border: rgba(184,134,11,0.3);
+  --text: #1a1a1a; --text2: #555550; --text3: #999990;
+  --border: rgba(0,0,0,0.08); --border2: rgba(0,0,0,0.14);
+}
+body.light .sidebar { background: var(--sidebar); border-right: 1px solid var(--border); }
+body.light .mobile-header { background: var(--sidebar); }
+body.light .mobile-top-btns { border-bottom: 1px solid var(--border); }
+
+/* ── 테마 토글 ── */
+.theme-toggle {
+  display: flex; gap: 6px; margin-bottom: 10px;
+}
+.theme-btn {
+  flex: 1; padding: 7px 4px; font-size: 11px; font-weight: 600;
+  font-family: 'Noto Sans KR', sans-serif;
+  border: 1px solid var(--border2); border-radius: 8px;
+  background: transparent; color: var(--text2); cursor: pointer; transition: all .15s;
+}
+.theme-btn.active {
+  background: var(--gold-dim); border-color: var(--gold-border); color: var(--gold);
+}
+
 /* ── 반응형 ── */
 @media (max-width: 600px) {
   .sidebar { display: none; }
@@ -141,7 +166,7 @@ body { background: var(--bg); color: var(--text); font-family: 'Noto Sans KR', s
       <div class="mobile-tab active" onclick="switchPage('home')"><span class="ico">🏠</span>홈</div>
       <div class="mobile-tab" onclick="switchPage('blog')"><span class="ico">📝</span>블로그</div>
       <div class="mobile-tab" onclick="switchPage('cafe')"><span class="ico">☕</span>카페</div>
-      <div class="mobile-tab" style="opacity:.4;cursor:not-allowed"><span class="ico">🧵</span>스레드🔒</div>
+      <div class="mobile-tab" onclick="switchPage('threads')"><span class="ico">🧵</span>스레드</div>
     </div>
   </div>
 
@@ -152,8 +177,12 @@ body { background: var(--bg); color: var(--text); font-family: 'Noto Sans KR', s
       <div class="nav-item active" onclick="switchPage('home')"><span class="nav-icon">🏠</span> 홈</div>
       <div class="nav-item" onclick="switchPage('blog')"><span class="nav-icon">📝</span> 네이버 블로그</div>
       <div class="nav-item" onclick="switchPage('cafe')"><span class="nav-icon">☕</span> 네이버 카페</div>
-      <div class="nav-item" style="opacity:.4;cursor:not-allowed"><span class="nav-icon">🧵</span> 스레드 🔒</div>
+      <div class="nav-item" onclick="switchPage('threads')"><span class="nav-icon">🧵</span> 스레드</div>
       <div class="sidebar-bottom">
+        <div class="theme-toggle">
+          <button class="theme-btn active" id="btn-dark" onclick="setTheme('dark')">🌙 다크</button>
+          <button class="theme-btn" id="btn-light" onclick="setTheme('light')">☀️ 라이트</button>
+        </div>
         <a href="https://open.kakao.com/o/gehIVJpi" target="_blank" class="side-btn code-btn">🎟 코드 받으러가기</a>
         <a href="https://open.kakao.com/me/Zheila" target="_blank" class="side-btn contact-btn">💬 문의하기</a>
       </div>
@@ -178,12 +207,11 @@ body { background: var(--bg); color: var(--text); font-family: 'Noto Sans KR', s
               <div class="home-card-desc">네이버 카페 글을 AI가 자동 작성해드려요</div>
               <div class="home-card-cta">바로가기 →</div>
             </div>
-            <div class="home-card" style="cursor:not-allowed;opacity:.6;position:relative">
-              <div style="position:absolute;top:12px;right:14px;font-size:14px">🔒</div>
+            <div class="home-card" onclick="switchPage('threads')">
               <div class="home-card-icon">🧵</div>
               <div class="home-card-name">스레드</div>
               <div class="home-card-desc">쿠팡 링크 삽입 가능한 스레드 자동화</div>
-              <div class="home-card-cta" style="color:var(--text3)">점검 중</div>
+              <div class="home-card-cta">바로가기 →</div>
             </div>
           </div>
         </div>
@@ -198,18 +226,15 @@ body { background: var(--bg); color: var(--text); font-family: 'Noto Sans KR', s
         <iframe id="iframe-cafe" src="about:blank" style="position:absolute;inset:0;opacity:0" onload="onLoad('cafe')"></iframe>
       </div>
       <div class="page" id="page-threads">
-        <div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;text-align:center;padding:24px">
-          <div style="font-size:52px">🔒</div>
-          <div style="font-size:18px;font-weight:700;color:var(--text)">준비 중이에요</div>
-          <div style="font-size:13px;color:var(--text2);line-height:1.7">스레드 자동화는 현재 점검 중입니다<br>조금만 기다려주세요</div>
-        </div>
+        <div class="loading" id="loading-threads"><div class="spinner"></div><div style="color:var(--text2);font-size:13px">스레드 로딩 중...</div></div>
+        <iframe id="iframe-threads" src="about:blank" style="position:absolute;inset:0;opacity:0;width:100%;height:100%;border:none" onload="onLoad('threads')"></iframe>
       </div>
     </div>
   </div>
 </div>
 
 <script>
-const URLS = { blog: '/blog', cafe: '/cafe', threads: 'https://zheiia-thread.up.railway.app/' }
+const URLS = { blog: '/blog', cafe: '/cafe', threads: '/threads' }
 const loaded = {}
 const PAGES = ['home','blog','cafe','threads']
 
@@ -233,7 +258,18 @@ async function doLogin() {
   }
 }
 
-async function checkSavedCode() {
+async function function setTheme(mode) {
+  document.body.classList.toggle('light', mode === 'light')
+  document.getElementById('btn-dark').classList.toggle('active', mode === 'dark')
+  document.getElementById('btn-light').classList.toggle('active', mode === 'light')
+  localStorage.setItem('hub_theme', mode)
+}
+
+// 저장된 테마 적용
+const savedTheme = localStorage.getItem('hub_theme') || 'dark'
+setTheme(savedTheme)
+
+checkSavedCode() {
   const saved = localStorage.getItem('hub_code')
   const savedVer = localStorage.getItem('hub_version')
   if (!saved) return
@@ -276,6 +312,17 @@ function onLoad(page) {
   document.getElementById('loading-' + page).style.display = 'none'
   document.getElementById('iframe-' + page).style.opacity = '1'
 }
+
+function setTheme(mode) {
+  document.body.classList.toggle('light', mode === 'light')
+  document.getElementById('btn-dark').classList.toggle('active', mode === 'dark')
+  document.getElementById('btn-light').classList.toggle('active', mode === 'light')
+  localStorage.setItem('hub_theme', mode)
+}
+
+// 저장된 테마 적용
+const savedTheme = localStorage.getItem('hub_theme') || 'dark'
+setTheme(savedTheme)
 
 checkSavedCode()
 </script>
