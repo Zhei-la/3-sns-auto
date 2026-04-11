@@ -241,6 +241,8 @@ body.light .t-lock-btn { background:#e8e7e0; color:#888; }
             <div class="chip" id="coupangChip" data-fixed="1" data-tone="쿠팡/홍보" onclick="toggleFixedTone(this)" style="opacity:0.35;cursor:not-allowed;pointer-events:none">🔒 쿠팡/홍보</div>
             <div class="chip" data-fixed="1" data-tone="댓글유도형" onclick="toggleFixedTone(this)">댓글유도형</div>
             <div class="chip" id="chic" data-fixed="1" data-tone="시크하게" onclick="toggleFixedTone(this)">😎 시크하게</div>
+            <div class="chip" id="moodBad" data-fixed="1" data-tone="하소연" data-mood="bad" onclick="toggleMoodTone(this)">😢 하소연</div>
+            <div class="chip" id="moodGood" data-fixed="1" data-tone="기분좋음" data-mood="good" onclick="toggleMoodTone(this)">😄 기분좋음</div>
           </div>
           <div style="height:1px;background:var(--bdr);margin-bottom:8px"></div>
           <div class="chips" id="toneChips">
@@ -1227,6 +1229,31 @@ function toggleFixedTone(el) {
   if (card) card.style.display = fixedTones.includes('쿠팡/홍보') ? 'block' : 'none';
 }
 
+function toggleMoodTone(el) {
+  var mood = el.getAttribute('data-mood');
+  var opposite = mood === 'bad' ? 'moodGood' : 'moodBad';
+  var oppositeEl = document.getElementById(opposite);
+  var t = el.getAttribute('data-tone');
+
+  // 이미 활성화된 거 누르면 해제
+  if (el.classList.contains('active')) {
+    el.classList.remove('active');
+    fixedTones = fixedTones.filter(function(x) { return x !== t; });
+    return;
+  }
+
+  // 반대 버튼 비활성화
+  if (oppositeEl && oppositeEl.classList.contains('active')) {
+    var oppositeT = oppositeEl.getAttribute('data-tone');
+    oppositeEl.classList.remove('active');
+    fixedTones = fixedTones.filter(function(x) { return x !== oppositeT; });
+  }
+
+  // 현재 버튼 활성화
+  el.classList.add('active');
+  if (!fixedTones.includes(t)) fixedTones.push(t);
+}
+
 var postLength = 'mid';
 function setQuickTopic(val) {
   document.getElementById('topic').value = val;
@@ -1295,6 +1322,41 @@ async function genPost() {
     };
     var lenRule = lengthRules[postLength] || lengthRules['mid'];
     var isChic = fixedTones.includes('시크하게');
+    var isBad = fixedTones.includes('하소연');
+    var isGood = fixedTones.includes('기분좋음');
+    var moodRule = isBad ? `
+━━━ 하소연 모드 ━━━
+- 지금 속상하거나 짜증나거나 허무한 감정을 솔직하게 털어놓는 글
+- 아래 방향 중 하나를 랜덤으로 골라서 매번 다르게 써줘:
+  1. 아무도 스하리 안 해줌 — 혼자 하는 느낌
+  2. 뒷삭 당한 서운함
+  3. 팔로워가 도무지 안 늘어나는 현실
+  4. 반하리 기다렸는데 안 옴
+  5. 스하리 문화 자체에 살짝 지침
+  6. 열심히 했는데 반응 없는 허무함
+  7. 뒷삭하는 사람 이해 안 됨
+  8. 혼자 열심히 하는 게 바보같은 느낌
+  9. 오늘따라 스레드 하기 싫은 날
+  10. 맞팔인 줄 알았는데 아닌 경우
+- 과장하지 말고 그냥 있는 그대로 툭 뱉는 느낌
+- 극적으로 슬픈 척 금지 — 담담하게 힘들다는 거
+` : isGood ? `
+━━━ 기분좋음 모드 ━━━
+- 오늘 기분 좋은 일이 있었던 것처럼 가볍게 자랑하는 글
+- 아래 방향 중 하나를 랜덤으로 골라서 매번 다르게 써줘:
+  1. 팔로워가 갑자기 훅 늘었음
+  2. 스하리 해줬는데 반하리까지 빠르게 옴
+  3. 오늘 반응이 유독 좋은 날
+  4. 좋은 스치니 만난 기분
+  5. 뒷삭 없이 팔로워 유지되는 게 뿌듯함
+  6. 댓글이나 반응이 많이 달린 날
+  7. 스하리 먼저 갔는데 결과가 좋았음
+  8. 팔로워 목표치에 가까워지는 느낌
+  9. 오늘 스레드 하길 잘했다는 기분
+  10. 좋은 스치니랑 이어진 것 같아서 기분 좋음
+- 과하게 흥분하거나 감사하다는 척 금지
+- 슬쩍 기분 좋은 티 내는 정도, 자랑이지만 부담 없이 가볍게
+` : '';
     var chicRule = isChic ? `
 ━━━ 시크 모드 (최우선 적용) ━━━
 - 쿨한 척 금지 — 시크한 거랑 멋있는 척은 다름
@@ -1336,6 +1398,7 @@ ${lenRule}
 - 그냥 있는 그대로 툭 뱉듯이 씀
 - "~야", "~지", "~잖아", "~거든", "~임" 자연스러운 반말체
 ${chicRule}
+${moodRule}
 
 ━━━ 스레드 전용 용어 (알고 있으면 자연스럽게 활용) ━━━
 - 스하리: 팔로우+좋아요+리포스트를 먼저 해주는 것
