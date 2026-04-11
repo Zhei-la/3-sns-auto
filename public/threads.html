@@ -891,7 +891,7 @@ function go(name, el) {
   document.getElementById('page-' + name).classList.add('active');
   if (el) el.classList.add('active');
   localStorage.setItem('page', name);
-  location.hash = name;
+  sessionStorage.setItem('page', name);
   if (name === 'schedule') loadSched();
   if (name === 'accounts') loadAccs();
   if (name === 'admin') loadAdmin();
@@ -989,10 +989,8 @@ function enterApp(user) {
     if (form) form.style.display = 'none';
     if (tagOnly) tagOnly.style.display = 'block';
   }
-  // hash > localStorage 순으로 페이지 복원
-  var hash = location.hash.replace('#', '');
-  var validPages = ['write', 'schedule', 'autoSchedule', 'accounts', 'admin'];
-  var saved = (hash && validPages.includes(hash)) ? hash : (localStorage.getItem('page') || 'write');
+  // sessionStorage > localStorage 순으로 페이지 복원 (새로고침 대응)
+  var saved = sessionStorage.getItem('page') || localStorage.getItem('page') || 'write';
   var navEl = document.querySelector('.nav-item[onclick*="go(\'"+saved+"\'"]');
   go(saved, navEl);
 }
@@ -1040,6 +1038,7 @@ async function doLogout() {
   session = '';
   localStorage.removeItem('sess');
   localStorage.removeItem('page');
+  sessionStorage.removeItem('page');
   document.getElementById('appWrap').classList.remove('on');
   enterApp({ role: 'user', plan: 'basic', nickname: '', accountLimit: 0, status: 'approved' });
 }
