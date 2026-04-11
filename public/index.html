@@ -258,7 +258,7 @@ async function doLogin() {
   }
 }
 
-async function function setTheme(mode) {
+async function setTheme(mode) {
   document.body.classList.toggle('light', mode === 'light')
   document.getElementById('btn-dark').classList.toggle('active', mode === 'dark')
   document.getElementById('btn-light').classList.toggle('active', mode === 'light')
@@ -269,7 +269,7 @@ async function function setTheme(mode) {
 const savedTheme = localStorage.getItem('hub_theme') || 'dark'
 setTheme(savedTheme)
 
-checkSavedCode() {
+async function checkSavedCode() {
   const saved = localStorage.getItem('hub_code')
   const savedVer = localStorage.getItem('hub_version')
   if (!saved) return
