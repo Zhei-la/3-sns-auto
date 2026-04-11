@@ -100,26 +100,30 @@ body { background: var(--bg); color: var(--text); font-family: 'Noto Sans KR', s
 
 /* ── 라이트 모드 ── */
 body.light {
-  --bg: #f0efe8; --bg2: #ffffff; --bg3: #e8e7e0; --sidebar: #dedad0;
-  --gold: #8a6200; --gold-dim: rgba(138,98,0,0.12); --gold-border: rgba(138,98,0,0.35);
-  --text: #0a0a0a; --text2: #333330; --text3: #666660;
-  --border: rgba(0,0,0,0.1); --border2: rgba(0,0,0,0.18);
+  --bg: #f5f5f0; --bg2: #ffffff; --bg3: #eeeee8; --sidebar: #e0ddd5;
+  --gold: #7a5500; --gold-dim: rgba(122,85,0,0.12); --gold-border: rgba(122,85,0,0.35);
+  --text: #050505; --text2: #1a1a18; --text3: #444440;
+  --border: rgba(0,0,0,0.12); --border2: rgba(0,0,0,0.2);
 }
 body.light .sidebar { background: var(--sidebar); border-right: 1px solid var(--border); }
-body.light .sidebar-logo { color: #0a0a0a; }
+body.light .sidebar-logo { color: #050505; }
 body.light .sidebar-logo em { color: var(--gold); }
-body.light .nav-item { color: #333330; }
-body.light .nav-item.active { color: var(--gold); }
+body.light .nav-item { color: #1a1a18; }
+body.light .nav-item:hover { color: #050505; background: rgba(0,0,0,0.05); }
+body.light .nav-item.active { color: var(--gold); background: rgba(122,85,0,0.08); border-left-color: var(--gold); }
 body.light .mobile-header { background: var(--sidebar); }
 body.light .mobile-top-btns { border-bottom: 1px solid var(--border); }
-body.light .mobile-tab { color: #555550; }
+body.light .mobile-tab { color: #1a1a18; }
 body.light .mobile-tab.active { color: var(--gold); }
-body.light .home-title { color: #0a0a0a; }
-body.light .home-sub { color: #333330; }
-body.light .home-card { background: #ffffff; border-color: rgba(0,0,0,0.15); }
-body.light .home-card-name { color: #0a0a0a; }
-body.light .home-card-desc { color: #333330; }
-body.light .theme-btn { color: #333330; }
+body.light .home-title { color: #050505; }
+body.light .home-sub { color: #1a1a18; }
+body.light .home-card { background: #ffffff; border-color: rgba(0,0,0,0.18); }
+body.light .home-card-name { color: #050505; font-weight: 700; }
+body.light .home-card-desc { color: #1a1a18; }
+body.light .home-card-cta { color: var(--gold); }
+body.light .theme-btn { color: #1a1a18; border-color: rgba(0,0,0,0.2); }
+body.light .side-btn.contact-btn { color: #1a1a18; border-color: rgba(0,0,0,0.2); }
+body.light .spinner { border-color: rgba(0,0,0,0.15); border-top-color: var(--gold); }
 
 /* ── 테마 토글 ── */
 .theme-toggle {
@@ -248,15 +252,7 @@ body.light .theme-btn { color: #333330; }
       </div>
       <div class="page" id="page-threads" style="overflow-y:auto">
         <div class="loading" id="loading-threads" style="height:200px"><div class="spinner"></div><div style="color:var(--text2);font-size:13px">스레드 로딩 중...</div></div>
-        <iframe id="iframe-threads" src="about:blank" style="width:100%;height:calc(100vh - 200px);border:none;opacity:0;display:block" onload="onLoad('threads')"></iframe>
-        <div style="margin:20px;padding:24px;background:var(--bg3);border:1px solid var(--border2);border-radius:18px;text-align:center">
-          <div style="font-size:15px;font-weight:700;color:var(--text);margin-bottom:6px">협업 및 제휴 문의</div>
-          <div style="font-size:13px;color:var(--text2);margin-bottom:16px;line-height:1.7">광고 제휴, 기능 추가, 맞춤형 툴 제작 등<br>뭐든 편하게 말씀해주세요</div>
-          <div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap">
-            <a href="https://open.kakao.com/o/gehIVJpi" target="_blank" style="padding:9px 20px;background:var(--gold-dim);border:1px solid var(--gold-border);border-radius:8px;color:var(--gold);font-size:13px;font-weight:600;text-decoration:none">🎟 코드 받으러가기</a>
-            <a href="https://open.kakao.com/me/Zheila" target="_blank" style="padding:9px 20px;background:rgba(255,255,255,0.04);border:1px solid var(--border2);border-radius:8px;color:var(--text2);font-size:13px;font-weight:600;text-decoration:none">💬 문의하기</a>
-          </div>
-        </div>
+        <iframe id="iframe-threads" src="about:blank" style="width:100%;height:100vh;border:none;opacity:0;display:block" onload="onLoad('threads')"></iframe>
       </div>
     </div>
   </div>
