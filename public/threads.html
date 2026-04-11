@@ -1204,50 +1204,50 @@ function incGenCount() {
 }
 
 async function genPost() {
-  if (!checkGenAbuse()) return;
   var topic = document.getElementById('topic').value.trim();
   if (!topic) return toast('주제를 입력해줘', 'err');
   var btn = document.getElementById('genBtn');
   btn.disabled = true;
-  btn.innerHTML = '<span class="spin"></span> 생성 중...';
+  btn.innerHTML = '<span class="spin" style="display:inline-block;width:13px;height:13px;border:2px solid rgba(255,255,255,0.3);border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite;vertical-align:middle;margin-right:6px"></span> 생성 중...';
   try {
-    var imageDesc = '';
-    if (imgUrls.length > 0) {
-      btn.innerHTML = '<span class="spin"></span> 이미지 분석 중...';
-      try {
-        var ad = await api('/api/analyze-image', { method: 'POST', body: { imageUrl: imgUrls[0] } });
-        if (ad.desc) {
-          imageDesc = ad.desc;
-          var res = document.getElementById('imgAnalysisResult');
-          res.style.display = 'block';
-          res.textContent = '이미지 분석: ' + imageDesc;
-        }
-      } catch(e2) {}
-    }
-    btn.innerHTML = '<span class="spin"></span> 글 생성 중...';
     var userPrompt = document.getElementById('userPostPrompt') ? document.getElementById('userPostPrompt').value.trim() : '';
-    var d = await api('/api/generate', { method: 'POST', body: { topic: topic, tone: tone, fixedTones: fixedTones, type: 'post', imageDesc: imageDesc, userPrompt: userPrompt } });
-    if (d.error) throw new Error(d.error);
-    document.getElementById('postText').value = d.text;
-    incGenCount();
+    var toneStr = (fixedTones.length ? fixedTones.join(', ') + ', ' : '') + tone;
+    var prompt = '스레드(Threads) SNS 게시물을 작성해줘.\n주제: ' + topic + '\n말투/스타일: ' + toneStr + (userPrompt ? '\n추가 지침: ' + userPrompt : '') + '\n\n조건:\n- 짧고 임팩트 있게\n- 자연스러운 한국어\n- 이모지 1~2개\n- 해시태그 3~5개\n- 광고 아닌 친구 추천 느낌\n\n게시물만 출력하세요.';
+    var res = await fetch('/api/generate', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({model:'gpt-4o-mini', messages:[{role:'user', content:prompt}], temperature:0.85, max_tokens:500})
+    });
+    var data = await res.json();
+    if (data.error) throw new Error(data.error.message || '생성 실패');
+    var text = data.choices[0].message.content.trim();
+    document.getElementById('postText').value = text;
     toast('글 생성 완료!');
-  } catch(e) { toast(e.message, 'err'); }
+  } catch(e) { toast(e.message || '생성 실패', 'err'); }
   btn.disabled = false;
   btn.innerHTML = '🪄 글 생성';
 }
 
 async function genComment() {
-  if (!checkGenAbuse()) return;
   var topic = document.getElementById('topic').value.trim() || '일상';
+  var commentBtn = document.querySelector('[onclick="genComment()"]');
+  if (commentBtn) { commentBtn.disabled = true; commentBtn.textContent = '생성 중...'; }
   try {
     var commentPrompt = document.getElementById('userCommentPrompt') ? document.getElementById('userCommentPrompt').value.trim() : '';
-    var d = await api('/api/generate', { method: 'POST', body: { topic: topic, tone: tone, fixedTones: fixedTones, type: 'comment', commentPrompt: commentPrompt } });
-    if (d.error) throw new Error(d.error);
-    document.getElementById('commentText').value = d.text;
-    incGenCount();
-    showCommentReserve();
+    var toneStr = (fixedTones.length ? fixedTones.join(', ') + ', ' : '') + tone;
+    var prompt = '스레드(Threads) 댓글을 작성해줘.\n주제: ' + topic + '\n말투: ' + toneStr + (commentPrompt ? '\n추가 지침: ' + commentPrompt : '') + '\n\n조건:\n- 1~2문장으로 짧게\n- 자연스럽고 공감가게\n- 이모지 0~1개\n\n댓글만 출력하세요.';
+    var res = await fetch('/api/generate', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({model:'gpt-4o-mini', messages:[{role:'user', content:prompt}], temperature:0.85, max_tokens:200})
+    });
+    var data = await res.json();
+    if (data.error) throw new Error(data.error.message || '생성 실패');
+    var text = data.choices[0].message.content.trim();
+    document.getElementById('commentText').value = text;
     toast('댓글 생성 완료!');
-  } catch(e) { toast(e.message, 'err'); }
+  } catch(e) { toast(e.message || '생성 실패', 'err'); }
+  if (commentBtn) { commentBtn.disabled = false; commentBtn.textContent = '🪄 댓글 생성'; }
 }
 
 function trackGenCount() {
