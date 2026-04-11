@@ -306,12 +306,12 @@ body.light .t-lock-btn { background:#e8e7e0; color:#888; }
           <button class="btn btn-sm" onclick="saveCommentPrompt()" style="flex:1">💾 저장</button>
           <button class="btn btn-sm" onclick="clearCommentPrompt()" style="color:var(--txt2)">초기화</button>
         </div>
-        <textarea id="commentText" placeholder="댓글이 여기 생성됩니다..."></textarea>
-        <div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap">
-          <button class="btn btn-sm" onclick="genComment()">🪄 댓글 생성</button>
-          <button class="btn btn-sm" onclick="copyEl('commentText')">📋 복사</button>
-          <button class="btn btn-sm" onclick="openSched('comment')" style="display:none">📅 댓글만 예약</button>
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
+          <button class="btn btn-sm" onclick="genComment()" id="commentGenBtn">🪄 댓글 생성</button>
+          <button class="btn btn-sm" onclick="regenComments()" id="commentRegenBtn" style="display:none">🔄 재생성</button>
         </div>
+        <div id="commentList" style="display:flex;flex-direction:column;gap:8px"></div>
+        <textarea id="commentText" style="display:none"></textarea>
         <div style="margin-top:10px;font-size:11px;color:var(--txt2);padding:8px;background:rgba(239,68,68,.08);border-radius:6px;line-height:1.6">
           ⚠️ 너무 빠른 생성 시 IP 차단될 수 있어요.
         </div>
@@ -840,26 +840,43 @@ var mediaMode = 'photo';
 var imgUrls = [], imgFiles = [], vidUrl = '', editImgUrls = [], newTags = [], editTags = [];
 
 // 글 생성 어뷰징 방지
-var genClickTimes = [];
-var genCooldownUntil = 0;
+var postClickTimes = [];
+var commentClickTimes = [];
+var postCooldownUntil = 0;
+var commentCooldownUntil = 0;
 
-function checkGenAbuse() {
+function checkGenAbuse(type) {
+  // type: 'post' | 'comment'
   var now = Date.now();
-  // 쿨다운 중이면 차단
-  if (now < genCooldownUntil) {
-    var remain = Math.ceil((genCooldownUntil - now) / 1000);
-    toast('너무 빠르게 생성을 누르고 있어. ' + remain + '초 후에 다시 시도해줘.', 'err');
+  var cooldown = type === 'comment' ? commentCooldownUntil : postCooldownUntil;
+  var times = type === 'comment' ? commentClickTimes : postClickTimes;
+
+  if (now < cooldown) {
+    var remain = Math.ceil((cooldown - now) / 1000);
+    toast('잠깐, ' + remain + '초 후에 다시 눌러줘', 'err');
     return false;
   }
-  // 5초 이내 클릭만 카운트 (5초 넘으면 정상 사용)
-  genClickTimes = genClickTimes.filter(function(t) { return now - t < 60000; });
-  genClickTimes.push(now);
-  // 5초 이내 20번 이상이면 3분 쿨다운
-  if (genClickTimes.length >= 20) {
-    genCooldownUntil = now + 3 * 60 * 1000;
-    genClickTimes = [];
-    toast('연속으로 너무 많이 눌렀어. 3분 후에 다시 사용할 수 있어.', 'err');
-    return false;
+
+  // 1분 안에 누른 횟수만 카운트
+  var filtered = times.filter(function(t) { return now - t < 60000; });
+  filtered.push(now);
+
+  if (type === 'comment') {
+    commentClickTimes = filtered;
+    if (filtered.length > 40) {
+      commentCooldownUntil = now + 60 * 1000;
+      commentClickTimes = [];
+      toast('댓글 생성 1분에 40번 초과 — 1분 후 다시 사용 가능', 'err');
+      return false;
+    }
+  } else {
+    postClickTimes = filtered;
+    if (filtered.length > 40) {
+      postCooldownUntil = now + 60 * 1000;
+      postClickTimes = [];
+      toast('글 생성 1분에 40번 초과 — 1분 후 다시 사용 가능', 'err');
+      return false;
+    }
   }
   return true;
 }
@@ -1241,6 +1258,7 @@ function incGenCount() {
 }
 
 async function genPost() {
+  if (!checkGenAbuse('post')) return;
   var topic = document.getElementById('topic').value.trim();
   if (!topic) return toast('주제를 입력해줘', 'err');
   var btn = document.getElementById('genBtn');
@@ -1387,16 +1405,13 @@ ${chicRule}
   btn.innerHTML = '🪄 글 생성';
 }
 
-async function genComment() {
+function buildCommentPrompt() {
   var topic = document.getElementById('topic').value.trim() || '일상';
-  var commentBtn = document.querySelector('[onclick="genComment()"]');
-  if (commentBtn) { commentBtn.disabled = true; commentBtn.textContent = '생성 중...'; }
-  try {
-    var commentPrompt = document.getElementById('userCommentPrompt') ? document.getElementById('userCommentPrompt').value.trim() : '';
-    var toneStr = (fixedTones.length ? fixedTones.join(', ') + ', ' : '') + tone;
-    var postContent = document.getElementById('postText') ? document.getElementById('postText').value.trim() : '';
-    var prompt = `아래는 내가 스레드에 올린 글이야.
-이 글에 내가 직접 다는 댓글을 써줘.
+  var commentPrompt = document.getElementById('userCommentPrompt') ? document.getElementById('userCommentPrompt').value.trim() : '';
+  var toneStr = (fixedTones.length ? fixedTones.join(', ') + ', ' : '') + tone;
+  var postContent = document.getElementById('postText') ? document.getElementById('postText').value.trim() : '';
+  return `아래는 내가 스레드에 올린 글이야.
+이 글에 내가 직접 다는 댓글 5개를 써줘. 각각 분위기가 다르게.
 
 내 글:
 ${postContent || ('주제: ' + topic)}
@@ -1405,38 +1420,93 @@ ${postContent || ('주제: ' + topic)}
 
 ━━━ 반드시 지킬 것 ━━━
 - 나(글쓴이)가 내 글 밑에 다는 댓글임
-- 글의 내용을 읽고, 거기서 자연스럽게 이어지는 말을 써야 함
-- 글에서 한 말을 다시 설명하거나 요약하지 말 것
-- 글에서 못 다한 감정, 뒷얘기, 추가로 하고 싶은 말을 툭 던지는 것
-- 또는 읽는 사람이 뭔가 반응하고 싶게 여지 남기기
+- 글 내용에서 자연스럽게 이어지는 말
+- 글에서 못 다한 감정, 뒷얘기, 추가 하고 싶은 말
+- 또는 읽는 사람이 반응하고 싶게 여지 남기기
+- 댓글마다 분위기 다르게 (담담, 투정, 여유, 솔직, 궁금증 유발 등)
 
 ━━━ 절대 금지 ━━━
-- "매력적이야", "작품이야", "멋있어" 같은 칭찬 투 절대 금지
+- "매력적이야", "작품이야" 같은 칭찬 투 절대 금지
 - "저도요", "맞아요", "공감해요" 같은 제3자 반응 절대 금지
-- 글 내용이랑 전혀 상관없는 말 절대 금지
+- 글 내용이랑 상관없는 말 절대 금지
 - 마침표(.) 금지
 - 이모지 금지
 - 존댓말 금지
 - 포장하거나 예쁘게 마무리하려는 시도 금지
 
-예시 (글: "요즘 스하리 하기가 좀 피곤함 / 스치니들 반하리 안하고 뒷삭만 해대니 짜증남 / 그래도 반하리는 꼭 가는 편임 / 그게 나의 원칙임"):
-좋은 댓글 예시: "근데 진짜 뒷삭하는 사람들 이해가 안 됨 / 그냥 안 하면 되잖아"
-나쁜 댓글 예시: "스하리, 정말 매력적인 작품이야. 너도 그 분위기 느껴봤어?" ← 이런 거 절대 금지
+출력 형식 (반드시 이 형식으로):
+1. 댓글 내용
+2. 댓글 내용
+3. 댓글 내용
+4. 댓글 내용
+5. 댓글 내용
 
-댓글만 출력.`;
+번호와 댓글만 출력. 설명 없이.`;
+}
+
+function renderCommentList(comments) {
+  var list = document.getElementById('commentList');
+  var regenBtn = document.getElementById('commentRegenBtn');
+  if (!list) return;
+  list.innerHTML = comments.map(function(c, i) {
+    var escaped = c.replace(/'/g, "\'").replace(/
+/g, '\n');
+    return '<div style="display:flex;align-items:flex-start;gap:8px;padding:10px 12px;background:var(--sur2);border:1px solid var(--bdr);border-radius:8px">' +
+      '<div style="flex:1;font-size:13px;line-height:1.7;color:var(--txt);white-space:pre-wrap">' + c + '</div>' +
+      '<button class="btn btn-sm" style="flex-shrink:0;font-size:12px" onclick="copyComment('' + escaped + '')">📋</button>' +
+      '</div>';
+  }).join('');
+  if (regenBtn) regenBtn.style.display = '';
+  // commentText에 첫번째 댓글 세팅 (예약 등 기존 기능 호환)
+  var ct = document.getElementById('commentText');
+  if (ct && comments[0]) ct.value = comments[0];
+}
+
+function copyComment(text) {
+  navigator.clipboard.writeText(text).then(function() { toast('복사됐어!'); });
+}
+
+async function genComment() {
+  if (!checkGenAbuse('comment')) return;
+  var genBtn = document.getElementById('commentGenBtn');
+  var regenBtn = document.getElementById('commentRegenBtn');
+  if (genBtn) { genBtn.disabled = true; genBtn.textContent = '생성 중...'; }
+  if (regenBtn) regenBtn.disabled = true;
+  try {
+    var prompt = buildCommentPrompt();
     var res = await fetch('/api/generate', {
       method: 'POST',
       headers: {'Content-Type': 'application/json'},
-      body: JSON.stringify({model:'gpt-4o-mini', messages:[{role:'user', content:prompt}], temperature:0.85, max_tokens:200})
+      body: JSON.stringify({model:'gpt-4o-mini', messages:[{role:'user', content:prompt}], temperature:0.9, max_tokens:600})
     });
     var data = await res.json();
     if (data.error) throw new Error(typeof data.error === 'string' ? data.error : (data.error.message || JSON.stringify(data.error)));
     if (!data.choices || !data.choices[0]) throw new Error('응답 오류 — 잠시 후 다시 시도해줘');
-    var text = data.choices[0].message.content.trim();
-    document.getElementById('commentText').value = text;
-    toast('댓글 생성 완료!');
+    var raw = data.choices[0].message.content.trim();
+    // 번호 파싱
+    var lines = raw.split('\n').filter(function(l) { return l.trim(); });
+    var comments = [];
+    var cur = '';
+    lines.forEach(function(l) {
+      var m = l.match(/^\d+\.\s*/);
+      if (m) {
+        if (cur.trim()) comments.push(cur.trim());
+        cur = l.replace(m[0], '');
+      } else {
+        cur += (cur ? '\n' : '') + l;
+      }
+    });
+    if (cur.trim()) comments.push(cur.trim());
+    if (!comments.length) comments = [raw];
+    renderCommentList(comments);
+    toast('댓글 5개 생성 완료!');
   } catch(e) { toast(e.message || '생성 실패', 'err'); }
-  if (commentBtn) { commentBtn.disabled = false; commentBtn.textContent = '🪄 댓글 생성'; }
+  if (genBtn) { genBtn.disabled = false; genBtn.textContent = '🪄 댓글 생성'; }
+  if (regenBtn) regenBtn.disabled = false;
+}
+
+async function regenComments() {
+  await genComment();
 }
 
 function trackGenCount() {
