@@ -2646,21 +2646,10 @@ init();
 // 부모 허브에서 테마 수신
 window.addEventListener('message', function(e) {
   if (e.data && e.data.type === 'setTheme') {
-    document.documentElement.setAttribute('data-theme', e.data.theme);
     if (e.data.theme === 'light') {
-      document.documentElement.style.setProperty('--bg', '#f0efe8');
-      document.documentElement.style.setProperty('--sur', '#ffffff');
-      document.documentElement.style.setProperty('--sur2', '#e8e7e0');
-      document.documentElement.style.setProperty('--bdr', '#d0cfc8');
-      document.documentElement.style.setProperty('--txt', '#0a0a0a');
-      document.documentElement.style.setProperty('--txt2', '#333330');
+      document.body.classList.add('light');
     } else {
-      document.documentElement.style.setProperty('--bg', '#0a0a0a');
-      document.documentElement.style.setProperty('--sur', '#141414');
-      document.documentElement.style.setProperty('--sur2', '#1e1e1e');
-      document.documentElement.style.setProperty('--bdr', '#2a2a2a');
-      document.documentElement.style.setProperty('--txt', '#f0f0f0');
-      document.documentElement.style.setProperty('--txt2', '#888');
+      document.body.classList.remove('light');
     }
   }
 });
