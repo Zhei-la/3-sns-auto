@@ -43,6 +43,9 @@ app.use((req, res, next) => {
 
 // ── 보안 미들웨어 ──
 app.use((req, res, next) => {
+  // 코드 검증은 보안 미들웨어 제외
+  if (req.path === '/api/verify-code') return next();
+
   const ip = getClientIP(req);
 
   // 차단된 IP
