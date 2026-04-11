@@ -120,6 +120,62 @@ body.light .t-collab-chip { background:#e8e7e0; border-color:#c0bfb8; color:#444
 body.light .t-collab-btn { background:#8a6200; color:#fff; }
 body.light .t-collab-btn:hover { background:#a07800; }
 body.light .t-lock-btn { background:#e8e7e0; color:#888; }
+
+body.light { font-family: 'Noto Sans KR', sans-serif; }
+body.light .auth-wrap { background:#f0efe8; }
+body.light .auth-box { background:#ffffff; border-color:#d0cfc8; }
+/* 입력/선택 요소 전체 */
+body.light input, body.light textarea, body.light select {
+  background:#f5f4ee; border-color:#c0bfb8; color:#0a0a0a;
+}
+body.light input:focus, body.light textarea:focus, body.light select:focus {
+  border-color:#8a6200;
+}
+body.light input::placeholder, body.light textarea::placeholder { color:#999990; }
+/* 버튼 전체 */
+body.light .btn { background:#e8e7e0; border-color:#c0bfb8; color:#0a0a0a; }
+body.light .btn:hover { background:#dedad6; border-color:#aaa; }
+body.light .btn-sm { background:#e8e7e0; border-color:#c0bfb8; color:#0a0a0a; }
+body.light .btn-p { background:#8a6200 !important; border-color:#8a6200 !important; color:#fff !important; }
+body.light .btn-r { background:#e8e7e0; border-color:#c0bfb8; color:#c0392b; }
+/* 칩 */
+body.light .chip { background:#e8e7e0; border-color:#c0bfb8; color:#333330; }
+body.light .chip.active, body.light .chip[style*="background:var(--sur2)"] { background:rgba(138,98,0,0.12); border-color:rgba(138,98,0,0.3); color:#8a6200; }
+/* 카드 */
+body.light .card { background:#ffffff; border-color:#d0cfc8; }
+body.light .card h2 { color:#0a0a0a; }
+body.light .label { color:#555550; }
+/* 리스트 */
+body.light .list-item { background:#f5f4ee; border-color:#d0cfc8; color:#0a0a0a; }
+/* 배지 */
+body.light .badge { background:#e8e7e0; color:#444440; border-color:#c0bfb8; }
+body.light .badge.by { background:rgba(138,98,0,0.1); color:#8a6200; }
+body.light .badge.bp { background:rgba(34,100,34,0.1); color:#2d7a2d; }
+/* 저장/초기화 버튼 */
+body.light [onclick="saveCommentPrompt()"],
+body.light [onclick="clearCommentPrompt()"] {
+  background:#e8e7e0; border-color:#c0bfb8; color:#0a0a0a;
+}
+/* 노란색 버튼 (요금제) */
+body.light .btn[style*="yellow"], body.light [style*="color:var(--yellow)"] { color:#8a6200 !important; border-color:#8a6200 !important; }
+/* 경고 박스 */
+body.light [style*="rgba(239,68,68"] { background:rgba(180,40,40,0.07); color:#c0392b; }
+body.light [style*="rgba(59,130,246"] { background:rgba(30,80,160,0.07); color:#1a5fa0; }
+/* 모달 */
+body.light .modal { background:#ffffff; border-color:#d0cfc8; }
+body.light .modal h3 { color:#0a0a0a; }
+body.light .modal-bg { background:rgba(0,0,0,0.35); }
+/* 토스트 */
+body.light .toast { background:#ffffff; border-color:#d0cfc8; color:#0a0a0a; }
+/* 구분선 */
+body.light .nav-sep { border-color:#d0cfc8; }
+/* 글 생성 관련 */
+body.light [id="postText"], body.light [id="commentText"] {
+  background:#f5f4ee; border-color:#c0bfb8; color:#0a0a0a;
+}
+/* 전체 */
+body.light { background:#f0efe8; color:#0a0a0a; }
+
 </style>
 </head>
 <body>
