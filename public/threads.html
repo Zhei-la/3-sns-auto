@@ -1512,11 +1512,10 @@ function renderCommentList(comments) {
   var regenBtn = document.getElementById('commentRegenBtn');
   if (!list) return;
   list.innerHTML = comments.map(function(c, i) {
-    var escaped = c.replace(/'/g, "\'").replace(/
-/g, '\n');
+    var escaped = c.replace(/'/g, '&#39;');
     return '<div style="display:flex;align-items:flex-start;gap:8px;padding:10px 12px;background:var(--sur2);border:1px solid var(--bdr);border-radius:8px">' +
       '<div style="flex:1;font-size:13px;line-height:1.7;color:var(--txt);white-space:pre-wrap">' + c + '</div>' +
-      '<button class="btn btn-sm" style="flex-shrink:0;font-size:12px" onclick="copyComment('' + escaped + '')">📋</button>' +
+      '<button class="btn btn-sm" style="flex-shrink:0;font-size:12px" onclick="copyComment(this)">📋</button>' +
       '</div>';
   }).join('');
   if (regenBtn) regenBtn.style.display = '';
@@ -1525,7 +1524,8 @@ function renderCommentList(comments) {
   if (ct && comments[0]) ct.value = comments[0];
 }
 
-function copyComment(text) {
+function copyComment(btn) {
+  var text = btn.closest('div').querySelector('div').innerText;
   navigator.clipboard.writeText(text).then(function() { toast('복사됐어!'); });
 }
 
